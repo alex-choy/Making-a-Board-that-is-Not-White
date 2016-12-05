@@ -1,29 +1,32 @@
+package WhiteBoard;
 import javafx.scene.paint.Color;
 
 public class DShapeModel {
 	
-	int xPosition;
-	int yPosition;
-	int width;
-	int height;
-	Color color;
-	public DShapeModel(int xPosition, int yPosition, int width, int height, Color color)
+	private int x;
+	private int y;
+	private int width;
+	private int height;
+	private Color color;
+	private String type;
+	public DShapeModel(int xPosition, int yPosition, int width, int height, Color color, String type)
 	{
-		this.xPosition = xPosition;		
-		this.yPosition = yPosition;
+		this.x = xPosition;		
+		this.y = yPosition;
 		this.width = width;
 		this.height = height;
 		this.color = color;
+		this.type = type;
 	}
 
-	public int getXPosition()
+	public int getX()
 	{
-		return xPosition;
+		return x;
 	}
 
-	public int getYPosition()
+	public int getY()
 	{
-		return yPosition;
+		return y;
 	}
 	
 	public int getWidth()
@@ -40,14 +43,17 @@ public class DShapeModel {
 	{
 		return color;
 	}
-	public void setXPosition(int xPosition)
+	public String getType(){
+		return type;
+	}
+	public void setX(int xPosition)
 	{
-		this.xPosition = xPosition;
+		this.x = xPosition;
 	}
 
-	public void setYPosition(int yPosition)
+	public void setY(int yPosition)
 	{
-		this.yPosition = yPosition;
+		this.y = yPosition;
 	}
 	
 	public void setWidth(int width)

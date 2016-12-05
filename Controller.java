@@ -23,16 +23,17 @@ public class Controller {
 		// TODO Auto-generated method stub
 		System.out.println(value);
 	}
-	public void addRectangle(TableView<TableInfo> table){
-		Rectangle rect = new Rectangle(100, 100, 100, 100);
-		rect.setFill(Color.GREY);
+	public void addRectangle(TableView<TableInfo> table, Canvas canvas){
+		//Rectangle rect = new Rectangle(100, 100, 100, 100);
+		DRect rect = new DRect();
 		Whiteboard.TableInfo info = new TableInfo("rect", rect.getX(),rect.getY(), rect.getWidth(), rect.getHeight());
 		table.getItems().add(info);
 		table.refresh();		
 		list.add(rect);
+		
 		System.out.println("Added Rectangle");
 	}
-	public void addEllipse(TableView<TableInfo> table)
+	public void addEllipse(TableView<TableInfo> table, Canvas canvas)
 	{
 		Ellipse ellipse = new Ellipse(100, 100, 100, 100);
 		ellipse.setFill(Color.GREY);
@@ -42,7 +43,7 @@ public class Controller {
 		list.add(ellipse);
 		System.out.println("Added Ellipse");
 	}
-	public void addText(String text, String f, TableView<TableInfo> table )
+	public void addText(String text, String f, TableView<TableInfo> table, Canvas canvas )
 	{
 		Text t = new Text(text);
 		t.setFont(Font.font(f));
@@ -57,7 +58,7 @@ public class Controller {
 		return list;
 	}
 	
-	public void addLine(TableView<TableInfo> table)
+	public void addLine(TableView<TableInfo> table, Canvas canvas)
 	{
 		Line line = new Line(100, 100, 100, 100);
 		line.setFill(Color.GREY);

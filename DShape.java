@@ -1,3 +1,4 @@
+package WhiteBoard;
 import java.awt.Graphics;
 
 public class DShape {
@@ -10,5 +11,6 @@ public class DShape {
   
   public void draw(Graphics g)
   {
+
   }
 }

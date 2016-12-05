@@ -1,5 +1,6 @@
 package WhiteBoard;
 
+import java.awt.Graphics;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,6 +30,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -41,14 +43,16 @@ public class Whiteboard extends Application
 	TableColumn<TableInfo, Double> yColumn;
 	TableColumn<TableInfo, Double> widthColumn;
 	TableColumn<TableInfo, Double> heightColumn;
+	@SuppressWarnings("rawtypes")
 	public void start(Stage stage)
 	{
 		Scene scene = new Scene(new Group());
-		stage.setTitle("Whiteoard");
-		stage.setHeight(500);
-		stage.setWidth(600);
+		stage.setTitle("Whiteboard");
+		stage.setHeight(550);
+		stage.setWidth(1050);
 		
 		BorderPane pane = new BorderPane();
+		Canvas canvas = new Canvas();
 		
 		//	CREATING BUTTONS AND OTHER OBJECTS
 		Controller controller = new Controller();
@@ -56,35 +60,44 @@ public class Whiteboard extends Application
 		VBox vbox = new VBox();
 		HBox colorBox = new HBox();
 		HBox textInfo = new HBox();
+		
 		buttonBox.setSpacing(5);
 		buttonBox.setPadding(new Insets(10, 0, 0, 10));
+		
 		Text add = new Text("Add:");
 		Button addRect = new Button("Rect");
 		Button addOval = new Button("Oval");
 		Button addLine = new Button("Line");
 		Button addText = new Button("Text");
+		
 		Button colorPicker = new Button("Color");
 		Button doneColorPicker = new Button("Done choosing color");
 		ColorPicker cp = new ColorPicker();	//create a new ColorPicker
+		
 		TextField textBox = new TextField();
 		TableView<TableInfo> table = new TableView();
 		table.setPrefWidth(stage.getWidth());
+		
+		
 		xColumn = new TableColumn<>("X");
-		xColumn.setPrefWidth(stage.getWidth()/4);
+		xColumn.setPrefWidth(stage.getWidth()/8.05);
 		xColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("x"));
+		
 		yColumn = new TableColumn<>("Y");
-		yColumn.setPrefWidth(stage.getWidth()/4);
+		yColumn.setPrefWidth(stage.getWidth()/8.05);
 		yColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("y"));
+		
 		widthColumn = new TableColumn<>("Width");
-		widthColumn.setPrefWidth(stage.getWidth()/4);
+		widthColumn.setPrefWidth(stage.getWidth()/8.05);
 		widthColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("width"));
+		
 		heightColumn = new TableColumn<>("Height");
-		heightColumn.setPrefWidth(stage.getWidth()/4);
+		heightColumn.setPrefWidth(stage.getWidth()/8.05);
 		heightColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("height"));
+		
 		table.getColumns().addAll(xColumn, yColumn, widthColumn, heightColumn);
+		table.setMaxWidth(stage.getWidth()/2);
 		//table.setPadding(new Insets(10, 10, 10, 10));
-		
-		
 		//INITIALIZING OBJECTS
 		doneColorPicker.setDisable(true);
         doneColorPicker.setVisible(false);
@@ -107,7 +120,8 @@ public class Whiteboard extends Application
 				{
 					public void handle(Event event) 
 					{
-						controller.addRectangle(table);
+						controller.addRectangle(table, canvas); 
+						
 						
 					}
 				});
@@ -117,7 +131,7 @@ public class Whiteboard extends Application
 				{
 					public void handle(Event e)
 					{
-						controller.addEllipse(table);
+						controller.addEllipse(table, canvas);
 					}
 				});
 		
@@ -125,7 +139,7 @@ public class Whiteboard extends Application
 		addLine.setOnAction(new EventHandler(){
 			public void handle(Event e)
 			{
-				controller.addLine(table);
+				controller.addLine(table, canvas);
 			}
 		});
 		
@@ -140,7 +154,7 @@ public class Whiteboard extends Application
 				{
 					String font = list.get(dropDown.getSelectionModel().getSelectedIndex());
 					Font f = new Font(font, 12);
-					controller.addText(textBox.getText(), font, table);
+					controller.addText(textBox.getText(), font, table, canvas);
 				}
 				catch(Exception exception)
 				{
@@ -196,7 +210,8 @@ public class Whiteboard extends Application
 		textInfo.getChildren().addAll(textBox, dropDown);
 		
 		vbox.getChildren().addAll(buttonBox, colorBox, textInfo, table);
-		
+
+		pane.setCenter(canvas);
 		pane.setLeft(vbox);
 		
 		((Group) scene.getRoot()).getChildren().add(pane);
