@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class Whiteboard extends Application
 		Canvas canvas = new Canvas();
 		
 		//	CREATING BUTTONS AND OTHER OBJECTS
-		Controller controller = new Controller();
+		Controller controller = new Controller(canvas);
 		HBox buttonBox = new HBox();
 		VBox vbox = new VBox();
 		HBox colorBox = new HBox();
@@ -116,13 +117,16 @@ public class Whiteboard extends Application
 		dropDown.getItems().addAll(list);
 		textBox.setPromptText("Enter text here");
 		//rectangle button
+		
+		//BufferedImage image = (BufferedImage) createImage(3,3);
+		
 		addRect.setOnAction(new EventHandler()
 				{
 					public void handle(Event event) 
 					{
-						controller.addRectangle(table, canvas); 
-						
-						
+						DRectModel model = new DRectModel();
+						DRect rect = new DRect(model);
+						controller.addRectangle(table, canvas, rect);						
 					}
 				});
 		

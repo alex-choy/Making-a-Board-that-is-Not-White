@@ -6,31 +6,32 @@ import javafx.scene.control.TableView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class Controller {
 	ArrayList<Object> list;
 	Whiteboard w;
-	public Controller()
+	Canvas canvas;
+	public Controller(Canvas canvas)
 	{
 		list = new ArrayList<>();
 		w = new Whiteboard();
+		this.canvas = canvas;
 	}
 	
 	public void setColor(Color value) {
 		// TODO Auto-generated method stub
 		System.out.println(value);
 	}
-	public void addRectangle(TableView<TableInfo> table, Canvas canvas){
+	public void addRectangle(TableView<TableInfo> table, Canvas canvas, DRect rect){
 		//Rectangle rect = new Rectangle(100, 100, 100, 100);
-		DRect rect = new DRect();
+	
 		Whiteboard.TableInfo info = new TableInfo("rect", rect.getX(),rect.getY(), rect.getWidth(), rect.getHeight());
 		table.getItems().add(info);
 		table.refresh();		
 		list.add(rect);
-		
+		canvas.draw(list);
 		System.out.println("Added Rectangle");
 	}
 	public void addEllipse(TableView<TableInfo> table, Canvas canvas)
