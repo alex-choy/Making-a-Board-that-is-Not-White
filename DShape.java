@@ -4,13 +4,17 @@ import java.awt.Graphics;
 public class DShape {
   DShapeModel model;
   
-  public DShape()
+  public DShape(DShapeModel model)
   {
-	  
+	  this.model = model;
   }
-  
-  public void draw(Graphics g)
+  public DShapeModel getModel()
   {
+	  return model;
+  }
 
-  }
+  
+  public void draw()
+  {}
+  
 }

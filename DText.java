@@ -1,60 +1,20 @@
 package WhiteBoard;
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 public class DText extends DShape {
 
-	public DText()
+	public DText(DTextModel text)
 	{
-		
+		super(text);
 	}
 	
-	public int getX()
+	@Override
+	public void draw()
 	{
-		return model.getX();
-	}
-
-	public int getY()
-	{
-		return model.getY();
-	}
-	
-	public int getWidth()
-	{
-		return model.getWidth();
-	}
-	
-	public int getHeight()
-	{
-		return model.getHeight();
-	}
-	
-	public Color getColor()
-	{
-		return model.getColor();
-	}
-	public void setX(int xPosition)
-	{
-		this.model.setX(xPosition);
-	}
-
-	public void setY(int yPosition)
-	{
-		this.model.setY(yPosition);
-	}
-	
-	public void setWidth(int width)
-	{
-		this.model.setWidth(width);
-	}
-	
-	public void setHeight(int height)
-	{
-		this.model.setHeight(height);
-	}
-	
-	public void setColor(Color color)
-	{
-		this.model.setColor(color);
+		Text drawn = new Text(super.getModel().getX(), super.getModel().getY(),"" );
+		drawn.setFill(super.getModel().getColor());
 	}
 }

@@ -1,59 +1,18 @@
 package WhiteBoard;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Line;
 
 public class DOval extends DShape {
 
-	public DOval()
+	public DOval(DOvalModel oval)
 	{
-		this.model = new DOvalModel(0,0,0,0,Color.GRAY);
-	}
+		super(oval);
+	}	
 	
-	public int getX()
+	@Override
+	public void draw()
 	{
-		return model.getX();
+		Ellipse drawn = new Ellipse(super.getModel().getX(),super.getModel().getY(), super.getModel().getWidth(), super.getModel().getHeight());
+		drawn.setFill(super.getModel().getColor());	}
 	}
-
-	public int getY()
-	{
-		return model.getY();
-	}
-	
-	public int getWidth()
-	{
-		return model.getWidth();
-	}
-	
-	public int getHeight()
-	{
-		return model.getHeight();
-	}
-	
-	public Color getColor()
-	{
-		return model.getColor();
-	}
-	public void setX(int xPosition)
-	{
-		this.model.setX(xPosition);
-	}
-
-	public void setY(int yPosition)
-	{
-		this.model.setY(yPosition);
-	}
-	
-	public void setWidth(int width)
-	{
-		this.model.setWidth(width);
-	}
-	
-	public void setHeight(int height)
-	{
-		this.model.setHeight(height);
-	}
-	
-	public void setColor(Color color)
-	{
-		this.model.setColor(color);
-	}
-}

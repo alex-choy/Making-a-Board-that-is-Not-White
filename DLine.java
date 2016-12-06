@@ -1,60 +1,21 @@
 package WhiteBoard;
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 
 public class DLine extends DShape {
 
-	public DLine()
+	public DLine(DLineModel line)
 	{
-		
+		super(line);
 	}
 	
-	public int getX()
+	@Override
+	public void draw()
 	{
-		return model.getX();
-	}
-
-	public int getY()
-	{
-		return model.getY();
+		Line drawn = new Line(super.getModel().getX(),super.getModel().getY(), super.getModel().getWidth(), super.getModel().getHeight());
+		drawn.setFill(super.getModel().getColor());
 	}
 	
-	public int getWidth()
-	{
-		return model.getWidth();
-	}
-	
-	public int getHeight()
-	{
-		return model.getHeight();
-	}
-	
-	public Color getColor()
-	{
-		return model.getColor();
-	}
-	public void setX(int xPosition)
-	{
-		this.model.setX(xPosition);
-	}
-
-	public void setY(int yPosition)
-	{
-		this.model.setY(yPosition);
-	}
-	
-	public void setWidth(int width)
-	{
-		this.model.setWidth(width);
-	}
-	
-	public void setHeight(int height)
-	{
-		this.model.setHeight(height);
-	}
-	
-	public void setColor(Color color)
-	{
-		this.model.setColor(color);
-	}
 }
