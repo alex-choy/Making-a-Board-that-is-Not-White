@@ -26,22 +26,29 @@ public class Controller {
 	}
 	public void addRectangle(TableView<TableInfo> table, Canvas canvas, DRect rect){
 		//Rectangle rect = new Rectangle(100, 100, 100, 100);
-	
-		Whiteboard.TableInfo info = new TableInfo("rect", rect.getX(),rect.getY(), rect.getWidth(), rect.getHeight());
+		DShapeModel model = rect.getModel();
+		Whiteboard.TableInfo info = new TableInfo("rect", model.getX(),model.getY(), model.getWidth(), model.getHeight());
 		table.getItems().add(info);
 		table.refresh();		
 		list.add(rect);
 		canvas.draw(list);
 		System.out.println("Added Rectangle");
 	}
-	public void addEllipse(TableView<TableInfo> table, Canvas canvas)
+	public void addEllipse(TableView<TableInfo> table, Canvas canvas, DOval oval)
 	{
 		Ellipse ellipse = new Ellipse(100, 100, 100, 100);
 		ellipse.setFill(Color.GREY);
-		Whiteboard.TableInfo info = new TableInfo("ellipse", ellipse.getCenterX() - ellipse.getRadiusX()/2,ellipse.getCenterY() - ellipse.getRadiusY()/2, ellipse.getRadiusX(), ellipse.getRadiusY());
+		
+		DShapeModel model = oval.getModel();
+		
+		//Whiteboard.TableInfo info = new TableInfo("ellipse", 				ellipse.getCenterX() - ellipse.getRadiusX()/2,				ellipse.getCenterY() - ellipse.getRadiusY()/2, 				ellipse.getRadiusX(), 				ellipse.getRadiusY());
+		
+		Whiteboard.TableInfo info = new TableInfo("ellipse", model.getX(), model.getY(), model.getWidth(), model.getHeight());
+		
 		table.getItems().add(info);
 		//table.refresh();	
-		list.add(ellipse);
+		list.add(oval);
+		canvas.draw(list);
 		System.out.println("Added Ellipse");
 	}
 	public void addText(String text, String f, TableView<TableInfo> table, Canvas canvas )

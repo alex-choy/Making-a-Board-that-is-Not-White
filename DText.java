@@ -2,6 +2,7 @@ package WhiteBoard;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 
 public class DText extends DShape {
@@ -12,9 +13,10 @@ public class DText extends DShape {
 	}
 	
 	@Override
-	public void draw()
+	public Shape draw()
 	{
-		Text drawn = new Text(super.getModel().getX(), super.getModel().getY(),"" );
+		Text drawn = new Text(super.getModel().getX(), super.getModel().getY(),"");
 		drawn.setFill(super.getModel().getColor());
+		return drawn;
 	}
 }

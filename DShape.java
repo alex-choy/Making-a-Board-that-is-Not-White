@@ -1,6 +1,8 @@
 package WhiteBoard;
 import java.awt.Graphics;
 
+import javafx.scene.shape.Shape;
+
 public class DShape {
   DShapeModel model;
   
@@ -14,7 +16,9 @@ public class DShape {
   }
 
   
-  public void draw()
-  {}
+  public Shape draw()
+  {
+	  return null;
+  }
   
 }

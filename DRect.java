@@ -3,6 +3,7 @@ import java.awt.Graphics;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
 public class DRect extends DShape {
 
@@ -12,9 +13,10 @@ public class DRect extends DShape {
 	}
 	
 	@Override
-	public void draw()
+	public Shape draw()
 	{
-		Rectangle drawn = new Rectangle(super.getModel().getX(),super.getModel().getY(), super.getModel().getWidth(), super.getModel().getHeight());
+		Shape drawn = new Rectangle(super.getModel().getX(),super.getModel().getY(), super.getModel().getWidth(), super.getModel().getHeight());
 		drawn.setFill(super.getModel().getColor());
+		return drawn;
 	}
 }

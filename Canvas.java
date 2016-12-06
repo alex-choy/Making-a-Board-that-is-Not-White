@@ -27,14 +27,13 @@ public class Canvas extends Pane {
 	public void draw(ArrayList<Object> list) {
 		for (Object o : list) {
 			if (o instanceof DRect) {
-				Rectangle rect = new Rectangle(((DRect) o).getX(), ((DRect) o).getY(), ((DRect) o).getWidth(), ((DRect) o).getHeight());
-				super.getChildren().add(rect);
+				super.getChildren().add(((DRect) o).draw());
 			} else if (o instanceof DOval) {
-				// DOval oval = new DOval();
+				super.getChildren().add(((DOval) o).draw());
 			} else if (o instanceof DLine) {
-				// DLine line = new DLine();
+				super.getChildren().add(((DLine) o).draw());
 			} else if (o instanceof DText) {
-				// DText text = new DText();
+				super.getChildren().add(((DText) o).draw());
 			}
 		}
 	}

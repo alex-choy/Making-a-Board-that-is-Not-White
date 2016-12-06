@@ -135,7 +135,9 @@ public class Whiteboard extends Application
 				{
 					public void handle(Event e)
 					{
-						controller.addEllipse(table, canvas);
+						DOvalModel model = new DOvalModel();
+						DOval oval = new DOval(model);
+						controller.addEllipse(table, canvas, oval);
 					}
 				});
 		
