@@ -25,7 +25,6 @@ public class Controller {
 		System.out.println(value);
 	}
 	public void addRectangle(TableView<TableInfo> table, Canvas canvas, DRect rect){
-		//Rectangle rect = new Rectangle(100, 100, 100, 100);
 		DShapeModel model = rect.getModel();
 		Whiteboard.TableInfo info = new TableInfo("rect", model.getX(),model.getY(), model.getWidth(), model.getHeight());
 		table.getItems().add(info);
@@ -41,7 +40,7 @@ public class Controller {
 		
 		DShapeModel model = oval.getModel();
 		
-		//Whiteboard.TableInfo info = new TableInfo("ellipse", 				ellipse.getCenterX() - ellipse.getRadiusX()/2,				ellipse.getCenterY() - ellipse.getRadiusY()/2, 				ellipse.getRadiusX(), 				ellipse.getRadiusY());
+		
 		
 		Whiteboard.TableInfo info = new TableInfo("ellipse", model.getX(), model.getY(), model.getWidth(), model.getHeight());
 		
