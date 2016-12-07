@@ -49,6 +49,9 @@ public class Whiteboard extends Application
 	DShape focusedObject = null;
 	Canvas canvas = null;
 	Rectangle[] knobs = null;
+	
+	VBox vbox = null; //Saaj's change
+	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void start(Stage stage)
 	{
@@ -61,11 +64,12 @@ public class Whiteboard extends Application
 		canvas = new Canvas();
 		
 		//	CREATING BUTTONS AND OTHER OBJECTS
-		Controller controller = new Controller(canvas);
+		
 		HBox buttonBox = new HBox();
-		VBox vbox = new VBox();
+		vbox = new VBox();				//saaj's change
 		HBox colorBox = new HBox();
 		HBox textInfo = new HBox();
+		HBox objectInfo = new HBox();  //saaj's code
 		
 		buttonBox.setSpacing(5);
 		buttonBox.setPadding(new Insets(10, 0, 0, 10));
@@ -75,6 +79,12 @@ public class Whiteboard extends Application
 		Button addOval = new Button("Oval");
 		Button addLine = new Button("Line");
 		Button addText = new Button("Text");
+		Button removeShape = new Button("Remove this object"); //Saaj's code
+		Button moveToFront = new Button("Move to Front"); //Saaj's code
+		Button moveToBack = new Button("Move to Back"); //Saaj's code
+		
+		objectInfo.getChildren().addAll(removeShape, moveToFront, moveToBack); //saaj's code
+		
 		
 		Button colorPicker = new Button("Color");
 		Button doneColorPicker = new Button("Done choosing color");
@@ -82,6 +92,7 @@ public class Whiteboard extends Application
 		
 		TextField textBox = new TextField();
 		TableView<TableInfo> table = new TableView();
+		Controller controller = new Controller(canvas, table); //Saaj's code
 		table.setPrefWidth(stage.getWidth());
 		
 		nameColumn = new TableColumn<>("Name");
@@ -108,7 +119,11 @@ public class Whiteboard extends Application
 		table.getColumns().addAll(nameColumn, xColumn, yColumn, widthColumn, heightColumn);
 		table.setMaxWidth(stage.getWidth()/2);
 		//table.setPadding(new Insets(10, 10, 10, 10));
+		
+		
 		//INITIALIZING OBJECTS
+		
+		
 		doneColorPicker.setDisable(true);
         doneColorPicker.setVisible(false);
         cp.setValue(Color.WHITE);				//initialize the color as white
@@ -135,7 +150,7 @@ public class Whiteboard extends Application
 					{
 						DRectModel model = new DRectModel();
 						DRect rect = new DRect(model);
-						controller.addRectangle(table, canvas, rect);						
+						controller.addRectangle(canvas, rect);	//Saaj's code					
 					}
 				});
 		
@@ -146,7 +161,7 @@ public class Whiteboard extends Application
 					{
 						DOvalModel model = new DOvalModel();
 						DOval oval = new DOval(model);
-						controller.addEllipse(table, canvas, oval);
+						controller.addEllipse(canvas, oval); //Saaj's code
 					}
 				});
 		
@@ -156,7 +171,7 @@ public class Whiteboard extends Application
 			{
 				DLineModel model = new DLineModel();
 				DLine line = new DLine(model);
-				controller.addLine(table, canvas, line);
+				controller.addLine(canvas, line); //Saaj's code
 			}
 		});
 		
@@ -173,7 +188,7 @@ public class Whiteboard extends Application
 					Font f = new Font(font, 12);
 					DTextModel model = new DTextModel();
 					DText text = new DText(model);
-					controller.addText(textBox.getText(), font, table, canvas, text);
+					controller.addText(textBox.getText(), font,canvas, text); //Saaj's code
 				}
 				catch(Exception exception)
 				{
@@ -182,14 +197,8 @@ public class Whiteboard extends Application
 				//vbox.getChildren().add(t);
 			}
 		});
-
-
-
-
-
-
-
         
+		//Saaj's Code start------------------------------------------------------------------------------------------------------------------------------
 		//ColorPicker button
 		colorPicker.setOnAction(new EventHandler()
 				{
@@ -198,36 +207,42 @@ public class Whiteboard extends Application
 						
 							if (!colorBox.getChildren().contains(cp))
 							{
-					        colorBox.getChildren().addAll(cp);
-					        doneColorPicker.setDisable(false);
-					        doneColorPicker.setVisible(true);
+								
+								if(focusedObject != null)
+								{
+									colorBox.getChildren().add(cp);  //Saaj's code
+									cp.setValue(focusedObject.getModel().getColor()); //Saaj's Code
+									doneColorPicker.setDisable(false); //Saaj's Code
+									doneColorPicker.setVisible(true); //Saaj's Code
+								}
+								else //Saaj's Code
+								{
+									System.out.println("Please choose an object to the the color of"); //Saaj's Code
+								}
+								
 							}
 						
 					}
 					
 				});
-		
-		
 		//done picking color button
 		doneColorPicker.setOnAction(new EventHandler()
 				{
 					public void handle(Event event)
 					{
 						
-							controller.setColor(cp.getValue());
+							controller.setColor(cp.getValue(), focusedObject);
 							colorBox.getChildren().removeAll(cp);
 							doneColorPicker.setVisible(false);
 							doneColorPicker.setDisable(true);
 					}
 				});
-		
+		//Saaj's code end-------------------------------------------------------------------------------------------------------------------------
 		//Adding in the clicking component
 		canvas.setOnMouseClicked(new EventHandler<MouseEvent>()
 		{
-
 			public void handle(MouseEvent event)
 			{
-				
 				double middleX =  event.getX();
 				double middleY = event.getY();
 				boolean obj = false;
@@ -242,7 +257,6 @@ public class Whiteboard extends Application
 							{
 								focusedObject = d;
 								obj = true;
-								//System.out.println(focusedObject.toString());
 								break;
 							}
 							else
@@ -255,23 +269,52 @@ public class Whiteboard extends Application
 				}
 				if (!obj)
 				{
-					if (knobs != null)
-					{
-						canvas.getChildren().removeAll(knobs);
-						knobs = null;
-					}
-					focusedObject = null;
+					makeUnfocused(); //Saaj's Code
 				}
 				if (focusedObject != null)
 				{
-					makeFocused(focusedObject);
+					makeFocused();  //Saaj's Code
+					setUpButtons(removeShape, moveToBack, moveToFront); //saaj's input
 				}
+			}
+		});
+		
+		//Saaj's Code---------------------------------------------------------------------------
+		
+		//Deleting Button
+		removeShape.setOnAction(new EventHandler()
+		{
+			@Override
+			public void handle(Event event) 
+			{
+				System.out.println(focusedObject);
+				canvas.getChildren().remove(focusedObject);
+				controller.removeObject(focusedObject);
+				//focusedObject = null;
+				//knobs = null;
+			}
+
+		});
+		
+		moveToBack.setOnAction(new EventHandler(){
+			public void handle(Event e)
+			{
+				controller.move2Back(focusedObject);
+				makeUnfocused();
 				
 			}
-			
+		});
+		
+		moveToFront.setOnAction(new EventHandler(){
+			public void handle(Event e)
+			{
+				controller.move2Front(focusedObject);
+				makeUnfocused();
+			}
 		});
 		
 		
+		//Saaj's Code end---------------------------------------------------------------------------
 		
 		// FINISHING OFF THE OBJECTS
 		buttonBox.getChildren().add(add);
@@ -285,7 +328,7 @@ public class Whiteboard extends Application
 
 		textInfo.getChildren().addAll(textBox, dropDown);
 		
-		vbox.getChildren().addAll(buttonBox, colorBox, textInfo, table);
+		vbox.getChildren().addAll(buttonBox, colorBox, textInfo, objectInfo, table);
 
 		pane.setCenter(canvas);
 		pane.setLeft(vbox);
@@ -296,14 +339,36 @@ public class Whiteboard extends Application
 		stage.show();
 	}
 	
-	public void makeFocused(DShape object)
+	public void makeFocused()
 	{
-		DShapeModel model = object.getModel();
+		DShapeModel model = focusedObject.getModel();
 		knobs = model.drawKnobs();
 		canvas.getChildren().addAll(knobs);
 		
 	}
 	
+	//Saaj's Method------------------------------------------------------------------------------------------------------------------------------------------------
+	public void setUpButtons(Button remove, Button back, Button front)
+	{
+		remove.setVisible(true);
+		back.setVisible(true);
+		front.setVisible(true);
+		remove.setDisable(false);
+		back.setDisable(false);
+		front.setDisable(false);
+	}
+	
+	public void makeUnfocused()
+	{
+		if (knobs != null)
+		{
+			canvas.getChildren().removeAll(knobs);
+			knobs = null;
+		}
+		focusedObject = null;
+	}
+	
+	//Saaj's Method End--------------------------------------------------------------------------------------------------------------------------------------------
 	/*public void updateTable(ArrayList<Object> list, TableView table)
 	{
 		//table.getItems().addAll(10, 10, 10, 10);

@@ -6,6 +6,7 @@ public class DRectModel extends DShapeModel {
 	public DRectModel() 
 	{
 		super();
+		setX(50);
 	}
 
 }

@@ -14,18 +14,27 @@ public class Controller {
 	ArrayList<DShape> list;
 	Whiteboard w;
 	Canvas canvas;
-	public Controller(Canvas canvas)
+	TableView<TableInfo> table; // Saaj's Code
+	public Controller(Canvas canvas, TableView<TableInfo> t) //Saaj's Code
 	{
 		list = new ArrayList<>();
 		w = new Whiteboard();
 		this.canvas = canvas;
+		table = t; //Saaj's Code
 	}
 	
-	public void setColor(Color value) {
-		// TODO Auto-generated method stub
+	//Saaj's Code start----------------------------------------------------------------------------------------------------------------------------
+	public void setColor(Color value, DShape shape)
+	{
+		DShapeModel model = shape.getModel();
+		model.setColor(value);
+		canvas.getChildren().remove(shape);
+		canvas.getChildren().add(shape.draw());
 		System.out.println(value);
 	}
-	public void addRectangle(TableView<TableInfo> table, Canvas canvas, DRect rect){
+	//Saaj's code end--------------------------------------------------------------------------------------------------------------------------------------
+	public void addRectangle(Canvas canvas, DRect rect) //Saaj's code
+	{
 		DShapeModel model = rect.getModel();
 		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(model.getType(new DRect(new DRectModel()) )), model.getX(),model.getY(), model.getWidth(), model.getHeight());
 		table.getItems().add(info);
@@ -34,21 +43,17 @@ public class Controller {
 		canvas.draw(list);
 		System.out.println("Added Rectangle");
 	}
-	public void addEllipse(TableView<TableInfo> table, Canvas canvas, DOval oval)
+	public void addEllipse(Canvas canvas, DOval oval) //Saaj's code
 	{		
 		DShapeModel model = oval.getModel();
-		
-		
-		
 		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty("ellipse"), model.getX(), model.getY(), model.getWidth(), model.getHeight());
-		
 		table.getItems().add(info);
 		//table.refresh();	
 		list.add(0, oval);
 		canvas.draw(list);
 		System.out.println("Added Ellipse");
 	}
-	public void addText(String text, String f, TableView<TableInfo> table, Canvas canvas, DText t)
+	public void addText(String text, String f, Canvas canvas, DText t) //Saaj's Code
 	{
 		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(t.getModel().getType(new DText(new DTextModel()) )), t.getModel().getX(), t.getModel().getY(), t.getModel().getWidth(), t.getModel().getHeight());
 		table.getItems().add(info);
@@ -61,7 +66,46 @@ public class Controller {
 		return list;
 	}
 	
-	public void addLine(TableView<TableInfo> table, Canvas canvas, DLine line)
+	//Saaj's code-----------------------------------------------------
+	public void removeObject(DShape d)
+	{
+		
+		System.out.println("In the controller class:" + d +"\nlist size:" + list.size());
+		list.remove(d);
+		canvas.getChildren().remove(d);
+		canvas.draw(list);
+	}
+	public void move2Back(DShape d)
+	{
+		DShape now = d;
+		list.remove(d);
+		list.add(now);
+		canvas.draw(list);
+		updateTable();
+		
+	}
+	public void move2Front(DShape d)
+	{
+		DShape now = d;
+		list.remove(d);
+		list.add(0, now);
+		canvas.draw(list);
+		updateTable();
+	}
+	
+	public void updateTable()
+	{
+		table.getItems().clear();
+		for(DShape shape: list)
+		{
+			DShapeModel model = shape.getModel();
+			String type = model.getType(shape);
+			Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(type), model.getX(), model.getY(), model.getWidth(), model.getHeight());
+			table.getItems().add(info);
+		}
+	}
+	//Saaj's code end--------------------------------------------------
+	public void addLine(Canvas canvas, DLine line)  //Saaj's code
 	{
 		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty("line"), line.getModel().getX(), line.getModel().getY(), line.getModel().getWidth(), line.getModel().getHeight());
 		table.getItems().add(info);
@@ -70,5 +114,6 @@ public class Controller {
 		canvas.draw(list);
 		System.out.println("Added Line");
 	}
+	
 	
 }
