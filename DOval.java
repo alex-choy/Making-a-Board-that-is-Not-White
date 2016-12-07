@@ -14,8 +14,8 @@ public class DOval extends DShape {
 	@Override
 	public Shape draw() {
 		DShapeModel model = super.getModel();
-		Ellipse drawn = new Ellipse(model.getX() + model.getWidth(), model.getY() + model.getHeight(), model.getWidth(),
-				model.getHeight());
+		Ellipse drawn = new Ellipse(model.getX() + model.getWidth()/2, model.getY() + model.getHeight()/2, model.getWidth()/2,
+				model.getHeight()/2);
 		drawn.setFill(model.getColor());
 		return drawn;
 	}

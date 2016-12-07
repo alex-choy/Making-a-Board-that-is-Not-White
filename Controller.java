@@ -34,10 +34,7 @@ public class Controller {
 		System.out.println("Added Rectangle");
 	}
 	public void addEllipse(TableView<TableInfo> table, Canvas canvas, DOval oval)
-	{
-		Ellipse ellipse = new Ellipse(100, 100, 100, 100);
-		ellipse.setFill(Color.GREY);
-		
+	{		
 		DShapeModel model = oval.getModel();
 		
 		
@@ -50,11 +47,9 @@ public class Controller {
 		canvas.draw(list);
 		System.out.println("Added Ellipse");
 	}
-	public void addText(String text, String f, TableView<TableInfo> table, Canvas canvas )
+	public void addText(String text, String f, TableView<TableInfo> table, Canvas canvas, DText t)
 	{
-		Text t = new Text(text);
-		t.setFont(Font.font(f));
-		Whiteboard.TableInfo info = new TableInfo("text", t.getX(), t.getY(), t.getScaleX(), t.getScaleY());
+		Whiteboard.TableInfo info = new TableInfo("text", t.getModel().getX(), t.getModel().getY(), t.getModel().getWidth(), t.getModel().getHeight());
 		table.getItems().add(info);
 		table.refresh();
 		//list.add(t);
@@ -65,11 +60,9 @@ public class Controller {
 		return list;
 	}
 	
-	public void addLine(TableView<TableInfo> table, Canvas canvas)
+	public void addLine(TableView<TableInfo> table, Canvas canvas, DLine line)
 	{
-		Line line = new Line(100, 100, 100, 100);
-		line.setFill(Color.GREY);
-		Whiteboard.TableInfo info = new TableInfo("line", line.getStartX(), line.getStartY(), line.getEndX() - line.getStartX(), line.getEndY() - line.getStartY());
+		Whiteboard.TableInfo info = new TableInfo("line", line.getModel().getX(), line.getModel().getY(), line.getModel().getWidth(), line.getModel().getHeight());
 		table.getItems().add(info);
 		table.refresh();
 		///list.add(line);

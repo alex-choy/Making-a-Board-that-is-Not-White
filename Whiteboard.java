@@ -48,7 +48,7 @@ public class Whiteboard extends Application
 	DShape focusedObject = null;
 	Canvas canvas = null;
 	Rectangle[] knobs = null;
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void start(Stage stage)
 	{
 		Scene scene = new Scene(new Group());
@@ -149,7 +149,9 @@ public class Whiteboard extends Application
 		addLine.setOnAction(new EventHandler(){
 			public void handle(Event e)
 			{
-				controller.addLine(table, canvas);
+				DLineModel model = new DLineModel();
+				DLine line = new DLine(model);
+				controller.addLine(table, canvas, line);
 			}
 		});
 		
@@ -164,7 +166,9 @@ public class Whiteboard extends Application
 				{
 					String font = list.get(dropDown.getSelectionModel().getSelectedIndex());
 					Font f = new Font(font, 12);
-					controller.addText(textBox.getText(), font, table, canvas);
+					DTextModel model = new DTextModel();
+					DText text = new DText(model);
+					controller.addText(textBox.getText(), font, table, canvas, text);
 				}
 				catch(Exception exception)
 				{
@@ -173,6 +177,13 @@ public class Whiteboard extends Application
 				//vbox.getChildren().add(t);
 			}
 		});
+
+
+
+
+
+
+
         
 		//ColorPicker button
 		colorPicker.setOnAction(new EventHandler()

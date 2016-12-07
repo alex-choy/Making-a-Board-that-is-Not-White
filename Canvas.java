@@ -23,8 +23,6 @@ public class Canvas extends Pane {
 	public void paintComponent(Graphics g) {
 
 	}
-
-	
 	
 	public void draw(ArrayList<DShape> list) {
 		for (Object o : list) {
