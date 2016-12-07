@@ -45,6 +45,7 @@ public class Whiteboard extends Application
 	TableColumn<TableInfo, Double> yColumn;
 	TableColumn<TableInfo, Double> widthColumn;
 	TableColumn<TableInfo, Double> heightColumn;
+	TableColumn<TableInfo, SimpleStringProperty> nameColumn;
 	DShape focusedObject = null;
 	Canvas canvas = null;
 	Rectangle[] knobs = null;
@@ -83,24 +84,28 @@ public class Whiteboard extends Application
 		TableView<TableInfo> table = new TableView();
 		table.setPrefWidth(stage.getWidth());
 		
+		nameColumn = new TableColumn<>("Name");
+		nameColumn.setPrefWidth(stage.getWidth()/10);
+		nameColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, SimpleStringProperty>("name"));
+
 		
 		xColumn = new TableColumn<>("X");
-		xColumn.setPrefWidth(stage.getWidth()/8.05);
+		xColumn.setPrefWidth(stage.getWidth()/10);
 		xColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("x"));
 		
 		yColumn = new TableColumn<>("Y");
-		yColumn.setPrefWidth(stage.getWidth()/8.05);
+		yColumn.setPrefWidth(stage.getWidth()/10);
 		yColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("y"));
 		
 		widthColumn = new TableColumn<>("Width");
-		widthColumn.setPrefWidth(stage.getWidth()/8.05);
+		widthColumn.setPrefWidth(stage.getWidth()/10);
 		widthColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("width"));
 		
 		heightColumn = new TableColumn<>("Height");
-		heightColumn.setPrefWidth(stage.getWidth()/8.05);
+		heightColumn.setPrefWidth(stage.getWidth()/10);
 		heightColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("height"));
 		
-		table.getColumns().addAll(xColumn, yColumn, widthColumn, heightColumn);
+		table.getColumns().addAll(nameColumn, xColumn, yColumn, widthColumn, heightColumn);
 		table.setMaxWidth(stage.getWidth()/2);
 		//table.setPadding(new Insets(10, 10, 10, 10));
 		//INITIALIZING OBJECTS
@@ -233,9 +238,18 @@ public class Whiteboard extends Application
 					{
 						if (middleY >= shape.getY() && middleY <= shape.getY() + shape.getHeight())
 						{
-							focusedObject = d;
-							obj = true;
-							break;
+							if(d != focusedObject)
+							{
+								focusedObject = d;
+								obj = true;
+								//System.out.println(focusedObject.toString());
+								break;
+							}
+							else
+							{
+								obj = false;
+								break;
+							}	
 						}
 					}
 				}
@@ -314,8 +328,8 @@ public class Whiteboard extends Application
         double y;
         double h;
 
-        TableInfo(String v, double d, double e, double f, double g) {
-            this.value = new SimpleStringProperty(v);
+        TableInfo(SimpleStringProperty v, double d, double e, double f, double g) {
+            this.value = v;
             this.x = d;
             this.y = e;
             this.w = f;
