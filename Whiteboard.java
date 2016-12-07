@@ -27,6 +27,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -44,6 +45,9 @@ public class Whiteboard extends Application
 	TableColumn<TableInfo, Double> yColumn;
 	TableColumn<TableInfo, Double> widthColumn;
 	TableColumn<TableInfo, Double> heightColumn;
+	DShape focusedObject = null;
+	Canvas canvas = null;
+	Rectangle[] knobs = null;
 	@SuppressWarnings("rawtypes")
 	public void start(Stage stage)
 	{
@@ -53,7 +57,7 @@ public class Whiteboard extends Application
 		stage.setWidth(1050);
 		
 		BorderPane pane = new BorderPane();
-		Canvas canvas = new Canvas();
+		canvas = new Canvas();
 		
 		//	CREATING BUTTONS AND OTHER OBJECTS
 		Controller controller = new Controller(canvas);
@@ -201,6 +205,47 @@ public class Whiteboard extends Application
 					}
 				});
 		
+		//Adding in the clicking component
+		canvas.setOnMouseClicked(new EventHandler<MouseEvent>()
+		{
+
+			public void handle(MouseEvent event)
+			{
+				
+				double middleX =  event.getX();
+				double middleY = event.getY();
+				boolean obj = false;
+				for (DShape d: controller.getObjects())
+				{
+					DShapeModel shape = d.getModel();
+					if(middleX >= shape.getX() && middleX <= shape.getX() + shape.getWidth())
+					{
+						if (middleY >= shape.getY() && middleY <= shape.getY() + shape.getHeight())
+						{
+							focusedObject = d;
+							obj = true;
+							break;
+						}
+					}
+				}
+				if (!obj)
+				{
+					if (knobs != null)
+					{
+						canvas.getChildren().removeAll(knobs);
+						knobs = null;
+					}
+					focusedObject = null;
+				}
+				if (focusedObject != null)
+				{
+					makeFocused(focusedObject);
+				}
+				
+			}
+			
+		});
+		
 		
 		
 		// FINISHING OFF THE OBJECTS
@@ -226,7 +271,13 @@ public class Whiteboard extends Application
 		stage.show();
 	}
 	
-	
+	public void makeFocused(DShape object)
+	{
+		DShapeModel model = object.getModel();
+		knobs = model.drawKnobs();
+		canvas.getChildren().addAll(knobs);
+		
+	}
 	
 	/*public void updateTable(ArrayList<Object> list, TableView table)
 	{

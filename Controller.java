@@ -10,7 +10,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class Controller {
-	ArrayList<Object> list;
+	ArrayList<DShape> list;
 	Whiteboard w;
 	Canvas canvas;
 	public Controller(Canvas canvas)
@@ -57,10 +57,10 @@ public class Controller {
 		Whiteboard.TableInfo info = new TableInfo("text", t.getX(), t.getY(), t.getScaleX(), t.getScaleY());
 		table.getItems().add(info);
 		table.refresh();
-		list.add(t);
+		//list.add(t);
 		System.out.println("Added Text: " + text );
 	}
-	public ArrayList getObjects()
+	public ArrayList<DShape> getObjects()
 	{
 		return list;
 	}
@@ -72,7 +72,7 @@ public class Controller {
 		Whiteboard.TableInfo info = new TableInfo("line", line.getStartX(), line.getStartY(), line.getEndX() - line.getStartX(), line.getEndY() - line.getStartY());
 		table.getItems().add(info);
 		table.refresh();
-		list.add(line);
+		///list.add(line);
 		System.out.println("Added Line");
 	}
 	

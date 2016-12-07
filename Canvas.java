@@ -24,7 +24,9 @@ public class Canvas extends Pane {
 
 	}
 
-	public void draw(ArrayList<Object> list) {
+	
+	
+	public void draw(ArrayList<DShape> list) {
 		for (Object o : list) {
 			if (o instanceof DRect) {
 				super.getChildren().add(((DRect) o).draw());
