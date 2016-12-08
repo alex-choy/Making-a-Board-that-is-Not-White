@@ -57,8 +57,8 @@ public class Whiteboard extends Application
 	{
 		Scene scene = new Scene(new Group());
 		stage.setTitle("Whiteboard");
-		stage.setHeight(550);
-		stage.setWidth(1050);
+		stage.setHeight(610); //Saaj's code
+		stage.setWidth(1100); //Saaj's code
 		
 		BorderPane pane = new BorderPane();
 		canvas = new Canvas();
@@ -67,6 +67,7 @@ public class Whiteboard extends Application
 		
 		HBox buttonBox = new HBox();
 		vbox = new VBox();				//saaj's change
+		
 		HBox colorBox = new HBox();
 		HBox textInfo = new HBox();
 		HBox objectInfo = new HBox();  //saaj's code
@@ -83,8 +84,9 @@ public class Whiteboard extends Application
 		Button moveToFront = new Button("Move to Front"); //Saaj's code
 		Button moveToBack = new Button("Move to Back"); //Saaj's code
 		
+		objectInfo.setPadding(new Insets(10, 10, 10, 10)); //saaj's code
 		objectInfo.getChildren().addAll(removeShape, moveToFront, moveToBack); //saaj's code
-		
+		hideButtons(removeShape, moveToFront, moveToBack);  //Saaj's code
 		
 		Button colorPicker = new Button("Color");
 		Button doneColorPicker = new Button("Done choosing color");
@@ -94,29 +96,30 @@ public class Whiteboard extends Application
 		TableView<TableInfo> table = new TableView();
 		Controller controller = new Controller(canvas, table); //Saaj's code
 		table.setPrefWidth(stage.getWidth());
+		table.setPrefHeight(365);  //saaj's code
 		
-		nameColumn = new TableColumn<>("Name");
-		nameColumn.setPrefWidth(stage.getWidth()/10);
-		nameColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, SimpleStringProperty>("name"));
+		nameColumn = new TableColumn<>("Name"); //Saaj's code
+		nameColumn.setPrefWidth(stage.getWidth()/10); //Saaj's code
+		nameColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, SimpleStringProperty>("name")); //Saaj's code
 
 		
 		xColumn = new TableColumn<>("X");
-		xColumn.setPrefWidth(stage.getWidth()/10);
+		xColumn.setPrefWidth(stage.getWidth()/8.05); //saaj's code
 		xColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("x"));
 		
 		yColumn = new TableColumn<>("Y");
-		yColumn.setPrefWidth(stage.getWidth()/10);
+		yColumn.setPrefWidth(stage.getWidth()/8.05); //saaj's code
 		yColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("y"));
 		
 		widthColumn = new TableColumn<>("Width");
-		widthColumn.setPrefWidth(stage.getWidth()/10);
+		widthColumn.setPrefWidth(stage.getWidth()/8.05); //saaj's code
 		widthColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("width"));
 		
 		heightColumn = new TableColumn<>("Height");
-		heightColumn.setPrefWidth(stage.getWidth()/10);
+		heightColumn.setPrefWidth(stage.getWidth()/8.05); //saaj's code
 		heightColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("height"));
 		
-		table.getColumns().addAll(nameColumn, xColumn, yColumn, widthColumn, heightColumn);
+		table.getColumns().addAll(xColumn, yColumn, widthColumn, heightColumn);
 		table.setMaxWidth(stage.getWidth()/2);
 		//table.setPadding(new Insets(10, 10, 10, 10));
 		
@@ -255,6 +258,7 @@ public class Whiteboard extends Application
 						{
 							if(d != focusedObject)
 							{
+								makeUnfocused(); //saaj's code
 								focusedObject = d;
 								obj = true;
 								break;
@@ -270,11 +274,12 @@ public class Whiteboard extends Application
 				if (!obj)
 				{
 					makeUnfocused(); //Saaj's Code
+					hideButtons(removeShape, moveToFront, moveToBack); //Saaj's code
 				}
 				if (focusedObject != null)
 				{
 					makeFocused();  //Saaj's Code
-					setUpButtons(removeShape, moveToBack, moveToFront); //saaj's input
+					setUpButtons(removeShape, moveToBack, moveToFront); //saaj's code
 				}
 			}
 		});
@@ -290,6 +295,7 @@ public class Whiteboard extends Application
 				System.out.println(focusedObject);
 				canvas.getChildren().remove(focusedObject);
 				controller.removeObject(focusedObject);
+				hideButtons(removeShape, moveToFront, moveToBack);
 				//focusedObject = null;
 				//knobs = null;
 			}
@@ -301,6 +307,7 @@ public class Whiteboard extends Application
 			{
 				controller.move2Back(focusedObject);
 				makeUnfocused();
+				hideButtons(removeShape, moveToFront, moveToBack);
 				
 			}
 		});
@@ -310,6 +317,7 @@ public class Whiteboard extends Application
 			{
 				controller.move2Front(focusedObject);
 				makeUnfocused();
+				hideButtons(removeShape, moveToFront, moveToBack);
 			}
 		});
 		
@@ -327,7 +335,7 @@ public class Whiteboard extends Application
 		colorBox.getChildren().add(doneColorPicker);
 
 		textInfo.getChildren().addAll(textBox, dropDown);
-		
+		vbox.setPadding(new Insets(10, 10, 40, 10)); //saaj's code
 		vbox.getChildren().addAll(buttonBox, colorBox, textInfo, objectInfo, table);
 
 		pane.setCenter(canvas);
@@ -368,6 +376,15 @@ public class Whiteboard extends Application
 		focusedObject = null;
 	}
 	
+	public void hideButtons(Button remove, Button back, Button front)
+	{
+		remove.setDisable(true);
+		back.setDisable(true);
+		front.setDisable(true);
+		remove.setVisible(false);
+		back.setVisible(false);
+		front.setVisible(false);
+	}
 	//Saaj's Method End--------------------------------------------------------------------------------------------------------------------------------------------
 	/*public void updateTable(ArrayList<Object> list, TableView table)
 	{

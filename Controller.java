@@ -35,12 +35,8 @@ public class Controller {
 	//Saaj's code end--------------------------------------------------------------------------------------------------------------------------------------
 	public void addRectangle(Canvas canvas, DRect rect) //Saaj's code
 	{
-		DShapeModel model = rect.getModel();
-		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(model.getType(new DRect(new DRectModel()) )), model.getX(),model.getY(), model.getWidth(), model.getHeight());
-		table.getItems().add(info);
-		table.refresh();		
 		list.add(0, rect);
-		canvas.draw(list);
+		canvas.draw(list, table);
 		System.out.println("Added Rectangle");
 	}
 	public void addEllipse(Canvas canvas, DOval oval) //Saaj's code
@@ -50,7 +46,7 @@ public class Controller {
 		table.getItems().add(info);
 		//table.refresh();	
 		list.add(0, oval);
-		canvas.draw(list);
+		canvas.draw(list, table);
 		System.out.println("Added Ellipse");
 	}
 	public void addText(String text, String f, Canvas canvas, DText t) //Saaj's Code
@@ -73,15 +69,15 @@ public class Controller {
 		System.out.println("In the controller class:" + d +"\nlist size:" + list.size());
 		list.remove(d);
 		canvas.getChildren().remove(d);
-		canvas.draw(list);
+		canvas.draw(list, table);
 	}
 	public void move2Back(DShape d)
 	{
 		DShape now = d;
 		list.remove(d);
 		list.add(now);
-		canvas.draw(list);
-		updateTable();
+		canvas.draw(list, table);
+		//updateTable();
 		
 	}
 	public void move2Front(DShape d)
@@ -89,11 +85,11 @@ public class Controller {
 		DShape now = d;
 		list.remove(d);
 		list.add(0, now);
-		canvas.draw(list);
-		updateTable();
+		canvas.draw(list, table);
+		//updateTable();
 	}
 	
-	public void updateTable()
+	/*public void updateTable()
 	{
 		table.getItems().clear();
 		for(DShape shape: list)
@@ -103,7 +99,7 @@ public class Controller {
 			Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(type), model.getX(), model.getY(), model.getWidth(), model.getHeight());
 			table.getItems().add(info);
 		}
-	}
+	}*/
 	//Saaj's code end--------------------------------------------------
 	public void addLine(Canvas canvas, DLine line)  //Saaj's code
 	{
@@ -111,7 +107,7 @@ public class Controller {
 		table.getItems().add(info);
 		table.refresh();
 		list.add(0, line);
-		canvas.draw(list);
+		canvas.draw(list, table);
 		System.out.println("Added Line");
 	}
 	
