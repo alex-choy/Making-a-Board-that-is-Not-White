@@ -44,6 +44,8 @@ public class Canvas extends Pane {
 			getChildren().add(o.draw());
 			
 		}
+		Rectangle r = new Rectangle(super.getWidth(), super.getHeight());
+		super.setClip(r);
 		
 	}
 
