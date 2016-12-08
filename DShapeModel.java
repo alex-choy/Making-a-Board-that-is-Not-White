@@ -73,12 +73,12 @@ public class DShapeModel {
 	public String getType(DShape d)
 	{
 		if (d instanceof DRect)
-		return "rectangle";
-		if (d instanceof DOval)
+			return "rectangle";
+		else if (d instanceof DOval)
 			return "oval";
-		if(d instanceof DText)
+		else if(d instanceof DText)
 			return "text";
-		if(d instanceof DLine)
+		else if(d instanceof DLine)
 			return "line";
 		else 
 			return null;

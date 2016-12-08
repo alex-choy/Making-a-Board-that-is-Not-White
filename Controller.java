@@ -49,13 +49,15 @@ public class Controller {
 		canvas.draw(list, table);
 		System.out.println("Added Ellipse");
 	}
-	public void addText(String text, String f, Canvas canvas, DText t) //Saaj's Code
+	public void addText(Canvas canvas, DText t) //Saaj's Code
 	{
-		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(t.getModel().getType(new DText(new DTextModel()) )), t.getModel().getX(), t.getModel().getY(), t.getModel().getWidth(), t.getModel().getHeight());
+		DShapeModel model = t.getModel();
+		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(model.getType(new DText(new DTextModel()) )), model.getX(), model.getY(), model.getWidth(), model.getHeight());
 		table.getItems().add(info);
 		table.refresh();
 		list.add(0, t);
-		System.out.println("Added Text: " + text );
+		canvas.draw(list, table);
+		//System.out.println("Added Text: " + text );
 	}
 	public ArrayList<DShape> getObjects()
 	{

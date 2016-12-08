@@ -4,7 +4,7 @@ import java.awt.Graphics;
 import javafx.scene.shape.Shape;
 
 public class DShape {
-  DShapeModel model;
+  private DShapeModel model;
   
   public DShape(DShapeModel model)
   {

@@ -84,6 +84,7 @@ public class Whiteboard extends Application
 		Button moveToFront = new Button("Move to Front"); //Saaj's code
 		Button moveToBack = new Button("Move to Back"); //Saaj's code
 		
+		objectInfo.setSpacing(5);
 		objectInfo.setPadding(new Insets(10, 10, 10, 10)); //saaj's code
 		objectInfo.getChildren().addAll(removeShape, moveToFront, moveToBack); //saaj's code
 		hideButtons(removeShape, moveToFront, moveToBack);  //Saaj's code
@@ -185,22 +186,19 @@ public class Whiteboard extends Application
 				
 				//Text t = new Text(textBox.getText());
 				//t.setFont(Font.font(font));
-				try
-				{
-					String font = list.get(dropDown.getSelectionModel().getSelectedIndex());
-					Font f = new Font(font, 12);
-					DTextModel model = new DTextModel();
-					DText text = new DText(model);
-					controller.addText(textBox.getText(), font,canvas, text); //Saaj's code
+				
+				//try	{
+				DTextModel model = new DTextModel();
+				DText text = new DText(model);
+				controller.addText(canvas, text); //Saaj's code
 				}
-				catch(Exception exception)
-				{
-					System.out.println("Something is wrong. Please check to make sure that you have written something in the text box and have chosen a font");
-				}
+				//catch(Exception exception){
+					//System.out.println("Something is wrong. Please check to make sure that you have written something in the text box and have chosen a font");
+				//}
 				//vbox.getChildren().add(t);
-			}
+				
+			//}
 		});
-        
 		//Saaj's Code start------------------------------------------------------------------------------------------------------------------------------
 		//ColorPicker button
 		colorPicker.setOnAction(new EventHandler()
