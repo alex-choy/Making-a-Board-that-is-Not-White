@@ -18,7 +18,15 @@ public class DShapeModel {
 		this.height = 50;
 		this.color = Color.GRAY;
 	}
-
+	
+	public DShapeModel(int x, int y, int width, int height, Color color)
+	{
+		this.x = x;		
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.color = color;
+	}
 	
 
 	public int getX()
@@ -92,35 +100,35 @@ public class DShapeModel {
 		Rectangle knob4 = null;
 		if(x - 5 < 0 || y - 5 < 0)
 		{
-			knob1 = new Rectangle(x-5, y-5, 5, 5);
+			knob1 = new Rectangle(x-9, y-9, 9, 9);
 		}
 		else
 		{
-			knob1 = new Rectangle(x, y, 5, 5);
+			knob1 = new Rectangle(x, y, 9, 9);
 		}
 		if (x - 5 < 0 || y + 5 > c.getHeight() )
 		{
-			knob2 = new Rectangle(x, y + height - 5, 5, 5);
+			knob2 = new Rectangle(x, y + height - 9, 9, 9);
 		}
 		else
 		{
-			knob2 = new Rectangle(x - 5, y + height + 5, 5, 5);
+			knob2 = new Rectangle(x - 9, y + height + 9, 9, 9);
 		}
 		if (x + width + 5 > c.getWidth() || y - 5 < 0)
 		{
-			knob3 = new Rectangle(x + width - 5, y, 5, 5);
+			knob3 = new Rectangle(x + width - 9, y, 9, 9);
 		}
 		else
 		{
-			knob3 = new Rectangle(x + width, y - 5, 5, 5);
+			knob3 = new Rectangle(x + width, y - 9, 9, 9);
 		}
 		if (x + width + 5 > c.getWidth() || y + height + 5 > c.getHeight())
 		{
-			knob4 = new Rectangle(x + width - 5, y + height - 5, 5, 5);
+			knob4 = new Rectangle(x + width - 9, y + height - 9, 9, 9);
 		}
 		else
 		{
-			knob4 = new Rectangle(x + width, y + height+5, 5, 5);
+			knob4 = new Rectangle(x + width, y + height+9, 9, 9);
 		}
 		Rectangle[] knobs = new Rectangle[4];
 		knobs[0] = knob1;

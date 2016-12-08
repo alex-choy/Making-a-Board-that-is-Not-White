@@ -15,6 +15,10 @@ public class DShape {
 	  return model;
   }
 
+  public void setModel(DShapeModel d)
+  {
+	  model = d;
+  }
   
   public Shape draw()
   {

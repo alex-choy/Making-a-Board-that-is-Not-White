@@ -7,5 +7,10 @@ public class DRectModel extends DShapeModel {
 	{
 		super();
 	}
+	
+	public DRectModel(int x, int y, int w, int h, Color c)
+	{
+		super(x, y, w, h, c);
+	}
 
 }

@@ -6,8 +6,11 @@ import java.util.ArrayList;
 
 import WhiteBoard.Whiteboard.TableInfo;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 
@@ -23,9 +26,18 @@ public class Canvas extends Pane {
 
 	}
 
-	public void paintComponent(Graphics g) {
-
+	public void dragMouse() 
+	{
+		super.setOnMouseDragged(new EventHandler()
+				{
+					public void handle(Event e)
+					{
+						
+					}
+				});
 	}
+	
+	
 	
 	public void draw(ArrayList<DShape> list, TableView<TableInfo> table) 
 	{
@@ -41,9 +53,9 @@ public class Canvas extends Pane {
 			table.getItems().add(info);
 			table.refresh();		
 			DShape o = list.get(i);
-			getChildren().add(o.draw());
-			
+			getChildren().add(o.draw());	
 		}
+		
 		Rectangle r = new Rectangle(super.getWidth(), super.getHeight());
 		super.setClip(r);
 		

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import WhiteBoard.Whiteboard.TableInfo;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Line;
@@ -78,6 +79,16 @@ public class Controller {
 		canvas.draw(list, table);
 		System.out.println("Added Ellipse");
 	}
+	
+	public void changeText(DText text, Font font, TextField textBox)
+	{
+		list.remove(text);
+		text.setText(textBox.getText());
+		text.setFont(font);
+		list.add(0, text);
+		canvas.draw(list, table);
+	}
+	
 	
 	public void refresh( DShape shaped)
 	{		
