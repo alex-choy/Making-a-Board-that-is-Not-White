@@ -23,6 +23,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -42,7 +45,11 @@ import javafx.stage.Stage;
 
 public class Whiteboard extends Application 
 {
-
+	Menu file;
+	MenuBar menu;
+	MenuItem open;
+	MenuItem save;
+	
 	   double orgSceneX, orgSceneY;
 	   double orgTranslateX, orgTranslateY;
 	   BorderPane pane;
@@ -72,7 +79,13 @@ public class Whiteboard extends Application
 		
 		BorderPane pane = new BorderPane();
 		canvas = new Canvas();
+		file = new Menu("FILE");
+		menu = new MenuBar();
+		open = new MenuItem("OPEN");
+		save  = new MenuItem("SAVE"); 
 		
+		menu.getMenus().add(file);
+		file.getItems().addAll(open,save);
 		//	CREATING BUTTONS AND OTHER OBJECTS
 		
 		HBox buttonBox = new HBox();
@@ -469,7 +482,7 @@ public class Whiteboard extends Application
 
 		textInfo.getChildren().addAll(textBox, dropDown, changeText);
 		vbox.setPadding(new Insets(10, 10, 40, 10)); //saaj's code				
-		vbox.getChildren().addAll(buttonBox, colorBox, textInfo, objectInfo, table);
+		vbox.getChildren().addAll(menu,buttonBox, colorBox, textInfo, objectInfo, table);
 		
 
 		pane.setCenter(canvas);
