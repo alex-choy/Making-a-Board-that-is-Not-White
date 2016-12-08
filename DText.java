@@ -1,8 +1,6 @@
 package WhiteBoard;
-
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -39,5 +37,4 @@ public class DText extends DShape {
 	public void setFont(Font f){
 		font = f;
 	}
-	
 }

@@ -37,8 +37,15 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class Whiteboard extends Application
+public class Whiteboard extends Application 
 {
+
+	   double orgSceneX, orgSceneY;
+	   double orgTranslateX, orgTranslateY;
+	   BorderPane pane;
+	boolean drag = false;
+	boolean resize = false;
+	
 	boolean opened = false;
 	ObservableList<TableInfo> data = FXCollections.observableArrayList();
 	TableColumn<TableInfo, Double> xColumn;
@@ -57,8 +64,8 @@ public class Whiteboard extends Application
 	{
 		Scene scene = new Scene(new Group());
 		stage.setTitle("Whiteboard");
-		stage.setHeight(610); //Saaj's code
-		stage.setWidth(1100); //Saaj's code
+		stage.setHeight(610);
+		stage.setWidth(1100);
 		
 		BorderPane pane = new BorderPane();
 		canvas = new Canvas();
@@ -66,10 +73,10 @@ public class Whiteboard extends Application
 		//	CREATING BUTTONS AND OTHER OBJECTS
 		
 		HBox buttonBox = new HBox();
-		vbox = new VBox();				//saaj's change
-		
+		vbox = new VBox();
 		HBox colorBox = new HBox();
 		HBox textInfo = new HBox();
+		
 		HBox objectInfo = new HBox();  //saaj's code
 		
 		buttonBox.setSpacing(5);
@@ -80,28 +87,30 @@ public class Whiteboard extends Application
 		Button addOval = new Button("Oval");
 		Button addLine = new Button("Line");
 		Button addText = new Button("Text");
-		Button removeShape = new Button("Remove this object"); //Saaj's code
-		Button moveToFront = new Button("Move to Front"); //Saaj's code
-		Button moveToBack = new Button("Move to Back"); //Saaj's code
 		
-		objectInfo.setSpacing(5);
-		objectInfo.setPadding(new Insets(10, 10, 10, 10)); //saaj's code
-		objectInfo.getChildren().addAll(removeShape, moveToFront, moveToBack); //saaj's code
+		Button removeShape = new Button("Remove this object"); //Saaj's code		
+		Button moveToFront = new Button("Move to Front"); //Saaj's code		
+		Button moveToBack = new Button("Move to Back"); //Saaj's code		
+		objectInfo.setSpacing(5);		
+		objectInfo.setPadding(new Insets(10, 10, 10, 10)); //saaj's code		
+		objectInfo.getChildren().addAll(removeShape, moveToFront, moveToBack); //saaj's code		
 		hideButtons(removeShape, moveToFront, moveToBack);  //Saaj's code
 		
 		Button colorPicker = new Button("Color");
 		Button doneColorPicker = new Button("Done choosing color");
 		ColorPicker cp = new ColorPicker();	//create a new ColorPicker
-		
+	
 		TextField textBox = new TextField();
+		textBox.setDisable(true);
+		textBox.setVisible(false);
 		TableView<TableInfo> table = new TableView();
 		Controller controller = new Controller(canvas, table); //Saaj's code
 		table.setPrefWidth(stage.getWidth());
 		table.setPrefHeight(365);  //saaj's code
 		
-		nameColumn = new TableColumn<>("Name"); //Saaj's code
-		nameColumn.setPrefWidth(stage.getWidth()/10); //Saaj's code
-		nameColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, SimpleStringProperty>("name")); //Saaj's code
+		nameColumn = new TableColumn<>("Name");
+		nameColumn.setPrefWidth(stage.getWidth()/10);
+		nameColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, SimpleStringProperty>("name"));
 
 		
 		xColumn = new TableColumn<>("X");
@@ -109,25 +118,21 @@ public class Whiteboard extends Application
 		xColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("x"));
 		
 		yColumn = new TableColumn<>("Y");
-		yColumn.setPrefWidth(stage.getWidth()/8.05); //saaj's code
+		yColumn.setPrefWidth(stage.getWidth()/8.05);
 		yColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("y"));
 		
 		widthColumn = new TableColumn<>("Width");
-		widthColumn.setPrefWidth(stage.getWidth()/8.05); //saaj's code
+		widthColumn.setPrefWidth(stage.getWidth()/8.05);
 		widthColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("width"));
 		
 		heightColumn = new TableColumn<>("Height");
-		heightColumn.setPrefWidth(stage.getWidth()/8.05); //saaj's code
+		heightColumn.setPrefWidth(stage.getWidth()/8.05);
 		heightColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, Double>("height"));
 		
 		table.getColumns().addAll(xColumn, yColumn, widthColumn, heightColumn);
 		table.setMaxWidth(stage.getWidth()/2);
 		//table.setPadding(new Insets(10, 10, 10, 10));
-		
-		
 		//INITIALIZING OBJECTS
-		
-		
 		doneColorPicker.setDisable(true);
         doneColorPicker.setVisible(false);
         cp.setValue(Color.WHITE);				//initialize the color as white
@@ -142,6 +147,8 @@ public class Whiteboard extends Application
 		list.add("Calibri");
 		list.add( "Arial");
         ChoiceBox dropDown = new ChoiceBox();
+        dropDown.setVisible(false);
+        dropDown.setDisable(true);
 		dropDown.getItems().addAll(list);
 		textBox.setPromptText("Enter text here");
 		//rectangle button
@@ -154,7 +161,7 @@ public class Whiteboard extends Application
 					{
 						DRectModel model = new DRectModel();
 						DRect rect = new DRect(model);
-						controller.addRectangle(canvas, rect);	//Saaj's code					
+						controller.addRectangle( rect);	
 					}
 				});
 		
@@ -165,7 +172,7 @@ public class Whiteboard extends Application
 					{
 						DOvalModel model = new DOvalModel();
 						DOval oval = new DOval(model);
-						controller.addEllipse(canvas, oval); //Saaj's code
+						controller.addEllipse( oval);
 					}
 				});
 		
@@ -175,7 +182,7 @@ public class Whiteboard extends Application
 			{
 				DLineModel model = new DLineModel();
 				DLine line = new DLine(model);
-				controller.addLine(canvas, line); //Saaj's code
+				controller.addLine(line);
 			}
 		});
 		
@@ -183,23 +190,18 @@ public class Whiteboard extends Application
 		addText.setOnAction(new EventHandler(){
 			public void handle(Event e)
 			{
-				
-				//Text t = new Text(textBox.getText());
-				//t.setFont(Font.font(font));
-				
 				//try	{
 				DTextModel model = new DTextModel();
 				DText text = new DText(model);
-				controller.addText(canvas, text); //Saaj's code
+				controller.addText( text); //Saaj's code
 				}
 				//catch(Exception exception){
 					//System.out.println("Something is wrong. Please check to make sure that you have written something in the text box and have chosen a font");
 				//}
 				//vbox.getChildren().add(t);
-				
-			//}
+			
 		});
-		//Saaj's Code start------------------------------------------------------------------------------------------------------------------------------
+
 		//ColorPicker button
 		colorPicker.setOnAction(new EventHandler()
 				{
@@ -207,43 +209,45 @@ public class Whiteboard extends Application
 					public void handle(Event arg0) {
 						
 							if (!colorBox.getChildren().contains(cp))
-							{
-								
-								if(focusedObject != null)
-								{
-									colorBox.getChildren().add(cp);  //Saaj's code
-									cp.setValue(focusedObject.getModel().getColor()); //Saaj's Code
-									doneColorPicker.setDisable(false); //Saaj's Code
-									doneColorPicker.setVisible(true); //Saaj's Code
-								}
-								else //Saaj's Code
-								{
-									System.out.println("Please choose an object to the the color of"); //Saaj's Code
-								}
-								
+							{if(focusedObject!= null)
+								colorBox.getChildren().add(cp);  //Saaj's code		
+							cp.setValue(focusedObject.getModel().getColor()); //Saaj's Code		
+							doneColorPicker.setDisable(false); //Saaj's Code		
+							doneColorPicker.setVisible(true); //Saaj's Code		
+						}		
+						else //Saaj's Code		
+						{		
+							System.out.println("Please choose an object to the the color of"); //Saaj's Code		
+						}		
+						
 							}
 						
 					}
 					
-				});
+				);
+		
+		
 		//done picking color button
 		doneColorPicker.setOnAction(new EventHandler()
 				{
 					public void handle(Event event)
 					{
 						
-							controller.setColor(cp.getValue(), focusedObject);
+						controller.setColor(cp.getValue(), focusedObject);
 							colorBox.getChildren().removeAll(cp);
 							doneColorPicker.setVisible(false);
 							doneColorPicker.setDisable(true);
 					}
 				});
-		//Saaj's code end-------------------------------------------------------------------------------------------------------------------------
+		
 		//Adding in the clicking component
 		canvas.setOnMouseClicked(new EventHandler<MouseEvent>()
 		{
+
 			public void handle(MouseEvent event)
 			{
+				  orgSceneX = event.getSceneX();
+		          orgSceneY = event.getSceneY();
 				double middleX =  event.getX();
 				double middleY = event.getY();
 				boolean obj = false;
@@ -258,11 +262,21 @@ public class Whiteboard extends Application
 							{
 								makeUnfocused(); //saaj's code
 								focusedObject = d;
+								if(focusedObject instanceof DText)
+								{
+									setUpTextInfo(textBox, dropDown);
+								}
+								else if(textBox.isVisible() == true)
+								{
+									removeTextInfo(textBox, dropDown);
+								}
 								obj = true;
+								//System.out.println(focusedObject.toString());
 								break;
 							}
 							else
 							{
+								removeTextInfo(textBox, dropDown);
 								obj = false;
 								break;
 							}	
@@ -271,22 +285,22 @@ public class Whiteboard extends Application
 				}
 				if (!obj)
 				{
+					removeTextInfo(textBox, dropDown);
 					makeUnfocused(); //Saaj's Code
 					hideButtons(removeShape, moveToFront, moveToBack); //Saaj's code
 				}
 				if (focusedObject != null)
 				{
-					makeFocused();  //Saaj's Code
-					setUpButtons(removeShape, moveToBack, moveToFront); //saaj's code
+					makeFocused();
+					setUpButtons(removeShape, moveToBack, moveToFront); //saaj's code;
 				}
+				
 			}
+			
 		});
 		
-		//Saaj's Code---------------------------------------------------------------------------
-		
-		//Deleting Button
-		removeShape.setOnAction(new EventHandler()
-		{
+		removeShape.setOnAction(new EventHandler(){
+			
 			@Override
 			public void handle(Event event) 
 			{
@@ -297,7 +311,6 @@ public class Whiteboard extends Application
 				//focusedObject = null;
 				//knobs = null;
 			}
-
 		});
 		
 		moveToBack.setOnAction(new EventHandler(){
@@ -320,7 +333,54 @@ public class Whiteboard extends Application
 		});
 		
 		
-		//Saaj's Code end---------------------------------------------------------------------------
+		canvas.setOnMouseDragged(new EventHandler<MouseEvent>(){
+
+			@Override
+			public void handle(MouseEvent t) {
+				if(focusedObject != null)
+				{
+						//controller.getObjects().remove(focusedObject);
+			           int offsetX = (int) (t.getSceneX() - orgSceneX);
+			           int offsetY = (int) (t.getSceneY() - orgSceneY);
+			           DShapeModel model = focusedObject.getModel();
+			           model.setX(model.getWidth()/2 + offsetX);
+			           model.setY(model.getHeight()/2 + offsetY);
+			           if (focusedObject instanceof DRect) 
+						{
+			        	   DRect rect = new DRect((DRectModel)model);
+			        	   controller.getObjects().add(rect);
+			        	   canvas.draw(controller.getObjects(), table);
+			        	   focusedObject = rect;
+						} 
+						else if (focusedObject instanceof DOval) 
+						{
+				        	 DOval oval = new DOval((DOvalModel)model);
+				        	 controller.getObjects().add(oval);
+				        	   canvas.draw(controller.getObjects(), table);
+				        	   focusedObject = oval;
+						} 
+						else if (focusedObject instanceof DLine) 
+						{
+				        	 DLine line = new DLine((DLineModel)model);
+
+				        	 controller.getObjects().add(line);
+				        	   canvas.draw(controller.getObjects(), table);
+				        	   focusedObject = line;
+						} 
+						else if (focusedObject instanceof DText) 
+						{
+				        	 DText text = new DText((DTextModel)model);
+				        	 controller.getObjects().add(text);
+				        	   canvas.draw(controller.getObjects(), table);
+				        	   focusedObject = text;
+						}
+			           //focusedObject.getModel().setX(offsetX + (focusedObject.getModel().getWidth()/2));
+			           //focusedObject.getModel().setY(offsetY+ (focusedObject.getModel().getHeight()/2));
+				}
+			}
+		});
+		
+		
 		
 		// FINISHING OFF THE OBJECTS
 		buttonBox.getChildren().add(add);
@@ -333,8 +393,9 @@ public class Whiteboard extends Application
 		colorBox.getChildren().add(doneColorPicker);
 
 		textInfo.getChildren().addAll(textBox, dropDown);
-		vbox.setPadding(new Insets(10, 10, 40, 10)); //saaj's code
+		vbox.setPadding(new Insets(10, 10, 40, 10)); //saaj's code				
 		vbox.getChildren().addAll(buttonBox, colorBox, textInfo, objectInfo, table);
+		
 
 		pane.setCenter(canvas);
 		pane.setLeft(vbox);
@@ -353,37 +414,37 @@ public class Whiteboard extends Application
 		
 	}
 	
-	//Saaj's Method------------------------------------------------------------------------------------------------------------------------------------------------
-	public void setUpButtons(Button remove, Button back, Button front)
-	{
-		remove.setVisible(true);
-		back.setVisible(true);
-		front.setVisible(true);
-		remove.setDisable(false);
-		back.setDisable(false);
-		front.setDisable(false);
-	}
-	
-	public void makeUnfocused()
-	{
-		if (knobs != null)
-		{
-			canvas.getChildren().removeAll(knobs);
-			knobs = null;
-		}
-		focusedObject = null;
-	}
-	
-	public void hideButtons(Button remove, Button back, Button front)
-	{
-		remove.setDisable(true);
-		back.setDisable(true);
-		front.setDisable(true);
-		remove.setVisible(false);
-		back.setVisible(false);
-		front.setVisible(false);
-	}
-	//Saaj's Method End--------------------------------------------------------------------------------------------------------------------------------------------
+	//Saaj's Method------------------------------------------------------------------------------------------------------------------------------------------------		
+		public void setUpButtons(Button remove, Button back, Button front)		
+		{		
+			remove.setVisible(true);		
+			back.setVisible(true);		
+			front.setVisible(true);		
+			remove.setDisable(false);		
+			back.setDisable(false);		
+			front.setDisable(false);		
+		}		
+				
+		public void makeUnfocused()		
+		{		
+			if (knobs != null)		
+			{		
+				canvas.getChildren().removeAll(knobs);		
+				knobs = null;		
+			}		
+			focusedObject = null;		
+		}		
+				
+		public void hideButtons(Button remove, Button back, Button front)		
+		{		
+			remove.setDisable(true);		
+			back.setDisable(true);		
+			front.setDisable(true);		
+			remove.setVisible(false);		
+			back.setVisible(false);		
+			front.setVisible(false);		
+		}		
+		//Saaj's Method End--------------------------------------------------------------------------------------------------------------------------------------------
 	/*public void updateTable(ArrayList<Object> list, TableView table)
 	{
 		//table.getItems().addAll(10, 10, 10, 10);
@@ -451,6 +512,26 @@ public class Whiteboard extends Application
     
 	public static void main(String[] args){
 		launch(args);
+	}
+
+	public void modelChanged(DShapeModel model) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void setUpTextInfo(TextField textBox, ChoiceBox dropDown)
+	{
+		textBox.setVisible(true);
+		textBox.setDisable(false);
+		dropDown.setVisible(true);
+		dropDown.setDisable(false);
+	}
+	public void removeTextInfo(TextField textBox, ChoiceBox dropDown)
+	{
+		textBox.setVisible(false);
+		textBox.setDisable(true);
+		dropDown.setVisible(false);
+		dropDown.setDisable(true);
 	}
 	
 }

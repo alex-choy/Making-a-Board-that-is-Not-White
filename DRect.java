@@ -15,8 +15,9 @@ public class DRect extends DShape {
 	@Override
 	public Shape draw()
 	{
-		Shape drawn = new Rectangle(super.getModel().getX(),super.getModel().getY(), super.getModel().getWidth(), super.getModel().getHeight());
-		drawn.setFill(super.getModel().getColor());
+		DShapeModel model = super.getModel();
+		Shape drawn = new Rectangle(model.getX(),model.getY(),model.getWidth(), model.getHeight());
+		drawn.setFill(model.getColor());
 		return drawn;
 	}
 }

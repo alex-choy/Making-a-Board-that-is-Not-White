@@ -27,7 +27,6 @@ public class Canvas extends Pane {
 
 	}
 	
-	//Saaj's Code start--------------------------------------------------------------------------
 	public void draw(ArrayList<DShape> list, TableView<TableInfo> table) 
 	{
 		System.out.println("In the canvas class " + list.size());
@@ -47,5 +46,5 @@ public class Canvas extends Pane {
 		}
 		
 	}
-	//Saaj's Code end---------------------------------------------------------------------------------------
+
 }

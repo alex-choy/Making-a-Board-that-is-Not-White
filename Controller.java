@@ -23,7 +23,6 @@ public class Controller {
 		table = t; //Saaj's Code
 	}
 	
-	//Saaj's Code start----------------------------------------------------------------------------------------------------------------------------
 	public void setColor(Color value, DShape shape)
 	{
 		DShapeModel model = shape.getModel();
@@ -32,39 +31,96 @@ public class Controller {
 		canvas.getChildren().add(shape.draw());
 		System.out.println(value);
 	}
-	//Saaj's code end--------------------------------------------------------------------------------------------------------------------------------------
-	public void addRectangle(Canvas canvas, DRect rect) //Saaj's code
-	{
+	public void addRectangle( DRect rect){	
 		list.add(0, rect);
 		canvas.draw(list, table);
 		System.out.println("Added Rectangle");
 	}
-	public void addEllipse(Canvas canvas, DOval oval) //Saaj's code
+	public void addEllipse(DOval oval)
 	{		
-		DShapeModel model = oval.getModel();
-		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty("ellipse"), model.getX(), model.getY(), model.getWidth(), model.getHeight());
-		table.getItems().add(info);
-		//table.refresh();	
 		list.add(0, oval);
 		canvas.draw(list, table);
 		System.out.println("Added Ellipse");
 	}
-	public void addText(Canvas canvas, DText t) //Saaj's Code
+	public void addText(DText t) //Saaj's Code
 	{
 		DShapeModel model = t.getModel();
 		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(model.getType(new DText(new DTextModel()) )), model.getX(), model.getY(), model.getWidth(), model.getHeight());
-		table.getItems().add(info);
-		table.refresh();
 		list.add(0, t);
 		canvas.draw(list, table);
-		//System.out.println("Added Text: " + text );
 	}
 	public ArrayList<DShape> getObjects()
 	{
 		return list;
 	}
 	
-	//Saaj's code-----------------------------------------------------
+	public void addLine(DLine line)
+	{
+		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty("line"), line.getModel().getX(), line.getModel().getY(), line.getModel().getWidth(), line.getModel().getHeight());
+		table.getItems().add(info);
+		table.refresh();
+		list.add(0, line);
+		canvas.draw(list, table);
+		System.out.println("Added Line");
+	}
+
+	public void addEllipse(DShapeModel oval)
+	{		
+		DShapeModel model = oval;
+		DOval who = new DOval((DOvalModel)model);
+		
+		
+		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty("ellipse"), model.getX(), model.getY(), model.getWidth(), model.getHeight());
+		
+		table.getItems().add(info);
+		//table.refresh();	
+		list.add(0, who);
+		canvas.draw(list, table);
+		System.out.println("Added Ellipse");
+	}
+	
+	public void refresh( DShape shaped)
+	{		
+		list.remove(shaped);
+		list.add(0, shaped);
+		System.out.println("refreshed");
+		Whiteboard.TableInfo info = null;
+		canvas.draw(list, table);
+		/*list.add(shaped.draw());
+		for(int i = 0; i<list.size();i++)
+		{
+
+				if (shaped instanceof DRectModel) 
+				{
+					DRect shape = new DRect((DRectModel)shaped);
+					list.set(i, (DRect)shape);
+					info = new TableInfo(new SimpleStringProperty("Rectangle"), shape.getModel().getX(), shape.getModel().getY(), shape.getModel().getWidth(), shape.getModel().getHeight());
+					table.getItems().set(i, info);
+				} 
+				else if (shaped instanceof DOvalModel) 
+				{
+					DOval shape = new DOval((DOvalModel)shaped);
+					list.set(i, (DOval)shape);
+					info = new TableInfo(new SimpleStringProperty("Ellipse"), shape.getModel().getX(), shape.getModel().getY(), shape.getModel().getWidth(), shape.getModel().getHeight());
+					table.getItems().set(i, info);
+				} 
+				else if (shaped instanceof DLineModel) 
+				{
+					DLine shape = new DLine((DLineModel)shaped);
+					list.set(i, (DLine)shape);
+					info = new TableInfo(new SimpleStringProperty("Line"), shape.getModel().getX(), shape.getModel().getY(), shape.getModel().getWidth(), shape.getModel().getHeight());
+					table.getItems().set(i, info);
+				} 
+				else if (shaped instanceof DTextModel) 
+				{
+					DText shape = new DText((DTextModel)shaped);
+						list.set(i, (DText)shape);
+						info = new TableInfo(new SimpleStringProperty("Text"), shape.getModel().getX(), shape.getModel().getY(), shape.getModel().getWidth(), shape.getModel().getHeight());
+						table.getItems().set(i, info);
+				}
+		}*/
+		//table.refresh();
+	}
 	public void removeObject(DShape d)
 	{
 		
@@ -90,28 +146,4 @@ public class Controller {
 		canvas.draw(list, table);
 		//updateTable();
 	}
-	
-	/*public void updateTable()
-	{
-		table.getItems().clear();
-		for(DShape shape: list)
-		{
-			DShapeModel model = shape.getModel();
-			String type = model.getType(shape);
-			Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(type), model.getX(), model.getY(), model.getWidth(), model.getHeight());
-			table.getItems().add(info);
-		}
-	}*/
-	//Saaj's code end--------------------------------------------------
-	public void addLine(Canvas canvas, DLine line)  //Saaj's code
-	{
-		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty("line"), line.getModel().getX(), line.getModel().getY(), line.getModel().getWidth(), line.getModel().getHeight());
-		table.getItems().add(info);
-		table.refresh();
-		list.add(0, line);
-		canvas.draw(list, table);
-		System.out.println("Added Line");
-	}
-	
-	
 }
