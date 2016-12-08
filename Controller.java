@@ -62,7 +62,7 @@ public class Controller {
 		table.refresh();
 		list.add(0, line);
 		canvas.draw(list, table);
-		System.out.println("Added Line");
+		//System.out.println("Added Line");
 	}
 
 	public void addEllipse(DShapeModel oval)

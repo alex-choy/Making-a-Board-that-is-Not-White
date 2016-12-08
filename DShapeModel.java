@@ -137,4 +137,36 @@ public class DShapeModel {
 		knobs[3] = knob4;
 		return knobs;
 	}
+	//############################################################################################################################################
+	public Rectangle[] drawLineKnobs(){
+		Rectangle[] knobs = new Rectangle[2];
+		
+		Rectangle topRight = null;
+		Rectangle botLeft = null;
+		
+		if(x - 5 < 0 || y - 5 < 0)
+		{
+			topRight = new Rectangle(x-4, y-4, 9, 9);
+		}
+		else
+		{
+			topRight = new Rectangle(x-5, y-5, 9, 9);
+		}
+		if (x + width + 5 > c.getWidth() || y + height + 5 > c.getHeight())
+		{
+			botLeft = new Rectangle( width - 4,  height - 4, 9, 9);
+		}
+		else
+		{
+			botLeft = new Rectangle(x + width - 5, y + height - 5, 9, 9);
+		}
+		
+		
+		
+		knobs[0] = topRight;
+		knobs[1] = botLeft;
+		
+		return knobs;
+	}
+	//############################################################################################################################################
 }

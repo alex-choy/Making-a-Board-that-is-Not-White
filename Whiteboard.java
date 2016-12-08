@@ -497,7 +497,13 @@ public class Whiteboard extends Application
 	public void makeFocused()
 	{
 		DShapeModel model = focusedObject.getModel();
-		knobs = model.drawKnobs();
+		//####################################################################################################################################3
+		if(focusedObject instanceof DLine){
+			knobs = model.drawLineKnobs();
+		}
+		else{
+			knobs = model.drawKnobs();
+		}//#######################################################################################################################################
 		canvas.getChildren().addAll(knobs);
 		
 	}
