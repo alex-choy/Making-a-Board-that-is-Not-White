@@ -25,7 +25,6 @@ public class Canvas extends Pane {
 		//DShapeModel model = shape.model;
 
 	}
-
 	/*
 	public void dragMouse() 
 	{
@@ -37,8 +36,8 @@ public class Canvas extends Pane {
 					}
 				});
 	}
-	
 	*/
+	
 	
 	public void draw(ArrayList<DShape> list, TableView<TableInfo> table) 
 	{

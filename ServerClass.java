@@ -38,7 +38,7 @@ class ClientHandler extends Thread
 			 //Message message = (Message) decoder.readObject();
 	         DShapeModel[] objects = (DShapeModel[]) decoder.readObject();
 			 System.out.println("client: reads the objects. List size: " + objects.length);                  
-	         invokeToGUI(message);              
+	        // invokeToGUI(message);              
 	         }              
 		 }
 		 catch (Exception ex) 

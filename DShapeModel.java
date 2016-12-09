@@ -2,8 +2,7 @@ package WhiteBoard;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class DShapeModel 
-{
+public class DShapeModel {
 	
 	private int x;
 	private int y;
@@ -97,13 +96,11 @@ public class DShapeModel
 		Rectangle knob4 = null;
 		if(x - 5 < 0 || y - 5 < 0)
 		{
-			
 			knob1 = new Rectangle(x-9, y-9, 9, 9);
 		}
 		else
 		{
 			System.out.println("This is right");
-
 			knob1 = new Rectangle(x, y, 9, 9);
 		}
 		if (x - 5 < 0 || y + 5 > c.getHeight() )

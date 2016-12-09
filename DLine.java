@@ -4,10 +4,10 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 
 public class DLine extends DShape {
-
+	
 	public DLine(DLineModel line)
 	{
-		super(line, "line");
+		super(line,"line");
 	}
 	
 	@Override

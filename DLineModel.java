@@ -7,7 +7,7 @@ public class DLineModel extends DShapeModel {
 	public DLineModel() {
 		super();
 		// TODO Auto-generated constructor stub
-	}
+}
 	
 	public DLineModel getModel()
 	{

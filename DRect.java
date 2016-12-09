@@ -9,6 +9,7 @@ public class DRect extends DShape {
 
 	Rectangle r = null;
 	DShapeModel model = null;
+	
 	public DRect(DRectModel rect)
 	{
 		super(rect, "rectangle");
@@ -30,8 +31,6 @@ public class DRect extends DShape {
 		//System.out.println("This is the current model Y: " + model.getY());
 		//r.setTranslateY(y);
 	}
-	
-	
 	@Override
 	public Shape draw()
 	{

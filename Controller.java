@@ -35,6 +35,7 @@ public class Controller {
 	public void addRectangle( DRect rect){	
 		list.add(0, rect);
 		canvas.draw(list, table);
+	
 	}
 	public void addEllipse(DOval oval)
 	{		
@@ -60,8 +61,8 @@ public class Controller {
 		table.refresh();
 		list.add(0, line);
 		canvas.draw(list, table);
-	}
 
+	}
 	/**
 	public void addEllipse(DShapeModel oval)
 	{		
@@ -77,8 +78,7 @@ public class Controller {
 		canvas.draw(list, table);
 		System.out.println("Added Ellipse");
 	}
-	
-	*/
+	**/
 	public void changeText(DText text, Font font, TextField textBox)
 	{
 		list.remove(text);
@@ -134,7 +134,7 @@ public class Controller {
 	public void removeObject(DShape d)
 	{
 		
-		//System.out.println("In the controller class:" + d +"\nlist size:" + list.size());
+		///System.out.println("In the controller class:" + d +"\nlist size:" + list.size());
 		list.remove(d);
 		canvas.getChildren().remove(d);
 		canvas.draw(list, table);
