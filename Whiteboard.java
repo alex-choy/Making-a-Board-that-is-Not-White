@@ -5,6 +5,7 @@ import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.beans.XMLDecoder;
@@ -16,6 +17,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Optional;
+
+import javax.imageio.ImageIO;
+
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.FileChooser;
 import javafx.application.Application;
@@ -23,12 +27,14 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
@@ -40,6 +46,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
@@ -59,6 +66,7 @@ public class Whiteboard extends Application
 	MenuBar menu;
 	MenuItem open;
 	MenuItem save;
+	MenuItem savePNG;
 	
 	   double orgSceneX, orgSceneY;
 	   double orgTranslateX, orgTranslateY;
@@ -95,9 +103,10 @@ public class Whiteboard extends Application
 		menu = new MenuBar();
 		open = new MenuItem("OPEN");
 		save  = new MenuItem("SAVE"); 
+		savePNG = new MenuItem("Save as PNG");
 		
 		menu.getMenus().add(file);
-		file.getItems().addAll(open,save);
+		file.getItems().addAll(open,save, savePNG);
 		//	CREATING BUTTONS AND OTHER OBJECTS
 		
 		HBox buttonBox = new HBox();
@@ -186,76 +195,99 @@ public class Whiteboard extends Application
 		dropDown.getItems().addAll(list);
 		textBox.setPromptText("Enter text here");
 		//open Button
-				open.setOnAction(new EventHandler(){
-					public void handle(Event e)
+		open.setOnAction(new EventHandler(){
+			public void handle(Event e)
+			{
+				File input = fileChooser.showOpenDialog(opener);
+				
+				try
+				{
+					InputStream input1 = new FileInputStream(input);
+					XMLDecoder xml = new XMLDecoder(input1);
+					DShapeModel[] shapes = (DShapeModel[]) xml.readObject();
+					controller.getObjects().clear();
+					for(DShapeModel d: shapes)
 					{
-						File input = fileChooser.showOpenDialog(opener);
-						
-						try
+						if(d.getType().equals("rectangle"))
 						{
-							InputStream input1 = new FileInputStream(input);
-							XMLDecoder xml = new XMLDecoder(input1);
-							DShapeModel[] shapes = (DShapeModel[]) xml.readObject();
-							controller.getObjects().clear();
-							for(DShapeModel d: shapes)
-							{
-								if(d.getType().equals("rectangle"))
-								{
-									controller.getObjects().add(0, new DRect((DRectModel) d));
-								}
-								else if(d.getType().equals("oval"))
-								{
-									controller.getObjects().add(0, new DOval((DOvalModel) d));
-								}
-								else if(d.getType().equals("line"))
-								{
-									controller.getObjects().add(0, new DLine((DLineModel) d));
-								}
-								else if(d.getType().equals("text"))
-								{
-									controller.getObjects().add(0, new DText((DTextModel) d));
-								}
-							}
-							input1.close();
-							canvas.draw(controller.getObjects(), table);
+							controller.getObjects().add(0, new DRect((DRectModel) d));
 						}
-						catch(Exception exception)
+						else if(d.getType().equals("oval"))
 						{
-							System.out.println("Can not find file " + exception);
+							controller.getObjects().add(0, new DOval((DOvalModel) d));
+						}
+						else if(d.getType().equals("line"))
+						{
+							controller.getObjects().add(0, new DLine((DLineModel) d));
+						}
+						else if(d.getType().equals("text"))
+						{
+							controller.getObjects().add(0, new DText((DTextModel) d));
 						}
 					}
-				});
+					input1.close();
+					canvas.draw(controller.getObjects(), table);
+				}
+				catch(Exception exception)
+				{
+					System.out.println("Can not find file " + exception);
+				}
+			}
+		});
 			
 				//save button
-				save.setOnAction(new EventHandler(){
-					public void handle(Event e)
-					{ 
-						
-						File input = fileChooser.showSaveDialog(opener);
-						
-						try 
-						{
-							XMLEncoder xml = new XMLEncoder( new BufferedOutputStream(new FileOutputStream(input)));
-							ArrayList<DShape> x = controller.getObjects();
-							DShapeModel[] shapes = new DShapeModel[x.size()];
-							int index = 0;
-							for(int i = x.size() - 1; i >= 0; i--)
-							{
-								shapes[index] = x.get(i).getModel();
-								index++;
-							}
-							xml.writeObject(shapes);
-							xml.close();
-							System.out.println("File has been created");
-						} 
-						catch (Exception e1) 
-						{
-							System.out.println("File System did not work");
-						}
+		save.setOnAction(new EventHandler(){
+			public void handle(Event e)
+			{ 
+				
+				File input = fileChooser.showSaveDialog(opener);
+					
+				try 
+				{
+					XMLEncoder xml = new XMLEncoder( new BufferedOutputStream(new FileOutputStream(input)));
+					ArrayList<DShape> x = controller.getObjects();
+					DShapeModel[] shapes = new DShapeModel[x.size()];
+					int index = 0;
+					for(int i = x.size() - 1; i >= 0; i--)
+					{
+						shapes[index] = x.get(i).getModel();
+						index++;
 					}
-				});
+					xml.writeObject(shapes);
+					xml.close();
+					System.out.println("File has been created");
+				} 
+				catch (Exception e1) 
+				{
+					System.out.println("File System did not work");
+				}
+			}
+		});
 				//rectangle button
 		
+		savePNG.setOnAction(new EventHandler(){
+
+			@Override
+			public void handle(Event event) {
+
+				FileChooser fileChooser = new FileChooser();
+				fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("png files (*.png)", "*.png"));
+				
+				File file = fileChooser.showSaveDialog(null);
+				if(file != null){
+					try{
+						WritableImage png = canvas.snapshot(new SnapshotParameters(), null);
+						//snapshot(null, png);
+						RenderedImage rendered = SwingFXUtils.fromFXImage(png, null);
+						ImageIO.write(rendered, "png", file);
+					}
+					catch(Exception e){
+						e.printStackTrace();
+					}
+				}
+			}
+			
+		});
 		//BufferedImage image = (BufferedImage) createImage(3,3);
 		
 		addRect.setOnAction(new EventHandler()
