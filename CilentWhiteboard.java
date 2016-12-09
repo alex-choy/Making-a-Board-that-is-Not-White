@@ -1,23 +1,26 @@
 package WhiteBoard;
 
-import java.util.ArrayList;
-
 import WhiteBoard.Whiteboard.TableInfo;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class CilentWhiteboard {
@@ -25,6 +28,8 @@ public class CilentWhiteboard {
 	MenuBar menu;
 	MenuItem open;
 	MenuItem save;
+	double orgSceneX, orgSceneY;
+	double orgTranslateX, orgTranslateY;
 	ObservableList<TableInfo> data = FXCollections.observableArrayList();
 	TableColumn<TableInfo, Double> xColumn;
 	TableColumn<TableInfo, Double> yColumn;
@@ -33,6 +38,8 @@ public class CilentWhiteboard {
 	TableColumn<TableInfo, SimpleStringProperty> nameColumn;
 	Canvas canvas = null;
 	VBox vbox = null; //Saaj's change
+	DShape focusedObject = null;
+	Rectangle[] knobs = null;
 
 	@SuppressWarnings("unchecked")
 	public void start(Stage stage)
@@ -63,7 +70,7 @@ public class CilentWhiteboard {
 		
 	
 		TableView<TableInfo> table = new TableView<>();
-		//Controller controller = new Controller(canvas, table); //Saaj's code
+		Controller controller = new Controller(canvas, table); //Saaj's code
 		table.setPrefWidth(stage.getWidth());
 		table.setPrefHeight(365);  //saaj's code
 		
@@ -91,21 +98,91 @@ public class CilentWhiteboard {
 		table.getColumns().addAll(xColumn, yColumn, widthColumn, heightColumn);
 		table.setMaxWidth(stage.getWidth()/2);
 
-        
-		ArrayList<String> list = new ArrayList<>();
-		list.add("Times New Roman");
-		list.add("Calibri");
-		list.add( "Arial");
 		
-		//BufferedImage image = (BufferedImage) createImage(3,3);
+		
+		canvas.setOnMouseClicked(new EventHandler<MouseEvent>()
+		{
+
+			public void handle(MouseEvent event)
+			{
+				  orgSceneX = event.getSceneX();
+		          orgSceneY = event.getSceneY();
+				double middleX =  event.getX();
+				double middleY = event.getY();
+				boolean obj = false;
+				for (DShape d: controller.getObjects())
+				{
+					DShapeModel shape = d.getModel();
+					if(middleX >= shape.getX() && middleX <= shape.getX() + shape.getWidth())
+					{
+						if (middleY >= shape.getY() && middleY <= shape.getY() + shape.getHeight())
+						{
+							if(d != focusedObject)
+							{
+								makeUnfocused(); //saaj's code
+								focusedObject = d;
+								controller.getObjects().remove(focusedObject);
+								controller.getObjects().add(0, focusedObject);
+								canvas.draw(controller.getObjects(), table);
+								obj = true;
+								//System.out.println(focusedObject.toString());
+								break;
+							}
+							else
+							{
+								obj = false;
+								break;
+							}	
+						}
+					}
+				}
+				if (!obj)
+				{
+					makeUnfocused(); //Saaj's Code
+				}
+				if (focusedObject != null)
+				{
+					makeFocused();
+				}
+				
+				
+			}
+			
+		});
+		
 		
 		vbox.getChildren().add(table);
-		pane.setCenter(canvas);
 		pane.setLeft(vbox);
+		pane.setCenter(canvas);
 		
 		((Group) scene.getRoot()).getChildren().add(pane);
 		
 		stage.setScene(scene);
 		stage.show();
+		
+		
+	}
+	public void makeUnfocused()		
+	{		
+		if (knobs != null)		
+		{		
+			canvas.getChildren().removeAll(knobs);		
+			knobs = null;		
+		}		
+		focusedObject = null;		
+	}	
+	
+	public void makeFocused()
+	{
+		DShapeModel model = focusedObject.getModel();
+		
+		if(focusedObject instanceof DLine){
+			knobs = model.drawLineKnobs();
+		}
+		else{
+			knobs = model.drawKnobs();
+		}
+		canvas.getChildren().addAll(knobs);
+		
 	}
 }
