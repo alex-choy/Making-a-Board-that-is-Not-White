@@ -2,7 +2,8 @@ package WhiteBoard;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class DShapeModel {
+public class DShapeModel 
+{
 	
 	private int x;
 	private int y;
@@ -90,43 +91,17 @@ public class DShapeModel {
 	
 	public Rectangle[] drawKnobs()
 	{
-		Rectangle knob1 = null;
-		Rectangle knob2 = null;
-		Rectangle knob3 = null;
-		Rectangle knob4 = null;
-		if(x - 5 < 0 || y - 5 < 0)
-		{
-			knob1 = new Rectangle(x-9, y-9, 9, 9);
-		}
-		else
-		{
-			System.out.println("This is right");
-			knob1 = new Rectangle(x, y, 9, 9);
-		}
-		if (x - 5 < 0 || y + 5 > c.getHeight() )
-		{
-			knob2 = new Rectangle(x, y + height - 9, 9, 9);
-		}
-		else
-		{
-			knob2 = new Rectangle(x - 9, y + height + 9, 9, 9);
-		}
-		if (x + width + 5 > c.getWidth() || y - 5 < 0)
-		{
-			knob3 = new Rectangle(x + width - 9, y, 9, 9);
-		}
-		else
-		{
-			knob3 = new Rectangle(x + width, y - 9, 9, 9);
-		}
-		if (x + width + 5 > c.getWidth() || y + height + 5 > c.getHeight())
-		{
-			knob4 = new Rectangle(x + width - 9, y + height - 9, 9, 9);
-		}
-		else
-		{
-			knob4 = new Rectangle(x + width, y + height+9, 9, 9);
-		}
+		 
+		
+		Rectangle knob1 = new Rectangle(x, y, 9, 9);
+	
+
+		Rectangle knob2 = new Rectangle(x, y + height - 9, 9, 9);
+	
+		Rectangle knob3 = new Rectangle(x + width - 9, y, 9, 9);
+		
+		Rectangle knob4 = new Rectangle(x + width - 9, y + height - 9, 9, 9);
+		
 		Rectangle[] knobs = new Rectangle[4];
 		knobs[0] = knob1;
 		knobs[1] = knob2;

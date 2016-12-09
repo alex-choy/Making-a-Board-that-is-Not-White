@@ -42,6 +42,14 @@ public class CilentWhiteboard {
 	VBox vbox = null; //Saaj's change
 	DShape focusedObject = null;
 	Rectangle[] knobs = null;
+	public String name;
+	public int port;
+	
+	public CilentWhiteboard(String name, int port)
+	{
+		this.name = name;
+		this.port = port;
+	}
 	
 	@SuppressWarnings("unchecked")
 	public void start(Stage stage)
@@ -100,6 +108,13 @@ public class CilentWhiteboard {
 		
 		table.getColumns().addAll(xColumn, yColumn, widthColumn, heightColumn);
 		table.setMaxWidth(stage.getWidth()/2);
+		
+		//Server stuff
+		//#########################################################################
+		ClientHandler client = new ClientHandler(name, port, canvas, table, controller);
+		client.start();
+		
+		//#######################################################################
 
         
 		canvas.setOnMouseClicked(new EventHandler<MouseEvent>()

@@ -19,6 +19,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class StartMenu extends Application{
+	
 
 	static String[] args1;
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -87,14 +88,15 @@ public class StartMenu extends Application{
 		{
 			public void handle(Event e)
 			{
-				TextInputDialog window = new TextInputDialog("");
+				TextInputDialog window = new TextInputDialog("8001");
 				window.setTitle("Server Port");
 				window.setHeaderText("Please enter a port number");
 				Optional<String> result = window.showAndWait();
 				if (result.isPresent()){
 				    System.out.println("Server number: " + result.get());
 				}
-
+				Whiteboard wb = new Whiteboard(Integer.parseInt(result.get().trim()), true);
+				wb.start(stage);
 			}
 		});
 		
@@ -102,7 +104,7 @@ public class StartMenu extends Application{
 
 			@Override
 			public void handle(Event event) {
-				Whiteboard wb = new Whiteboard();
+				Whiteboard wb = new Whiteboard(0, false);
 				wb.start(stage);		
 			}
 		});
@@ -111,7 +113,17 @@ public class StartMenu extends Application{
 
 			@Override
 			public void handle(Event arg0) {
-				CilentWhiteboard cwb = new CilentWhiteboard();
+				TextInputDialog window = new TextInputDialog("127.0.0.1:8001");
+				window.setTitle("Server Port");
+				window.setHeaderText("Please enter a port number");
+				Optional<String> result = window.showAndWait();
+				if (result.isPresent()){
+				    System.out.println("Server number: " + result.get());
+				}
+				String r = result.get();
+				String[] rs = r.split(":");
+				
+				CilentWhiteboard cwb = new CilentWhiteboard(rs[0].trim(), Integer.parseInt(rs[1].trim()));
 				cwb.start(stage);
 			}
 			

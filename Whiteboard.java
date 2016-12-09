@@ -5,9 +5,6 @@ import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.util.ArrayList;
-import java.util.List;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.BufferedOutputStream;
@@ -16,37 +13,37 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-
+import java.awt.image.RenderedImage;
 import javax.imageio.ImageIO;
-
-import javafx.scene.control.TextInputDialog;
-import javafx.stage.FileChooser;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.image.WritableImage;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
@@ -58,6 +55,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class Whiteboard extends Application 
@@ -67,14 +65,11 @@ public class Whiteboard extends Application
 	MenuItem open;
 	MenuItem save;
 	MenuItem savePNG;
-	
-	   double orgSceneX, orgSceneY;
-	   double orgTranslateX, orgTranslateY;
-	   BorderPane pane;
-	
-	boolean drag = false;
-	boolean resize = false;
-	
+	double orgSceneX, orgSceneY;
+	double orgTranslateX, orgTranslateY;
+	BorderPane pane;
+	boolean drag;
+	boolean resize;	
 	boolean opened = false;
 	ObservableList<TableInfo> data = FXCollections.observableArrayList();
 	TableColumn<TableInfo, Double> xColumn;
@@ -85,8 +80,17 @@ public class Whiteboard extends Application
 	DShape focusedObject = null;
 	Canvas canvas = null;
 	Rectangle[] knobs = null;
-	
+	public int port;
+	boolean isServer;
 	VBox vbox = null; //Saaj's change
+	
+	public Whiteboard(int port, boolean isServer)
+	{
+		this.port = port;
+		this.isServer = isServer;
+		drag = false;
+		resize = false;
+	}
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void start(Stage stage)
@@ -95,8 +99,10 @@ public class Whiteboard extends Application
 		stage.setTitle("Whiteboard");
 		stage.setHeight(610);
 		stage.setWidth(1100);
+		
 		Stage opener = new Stage();
 		opener.setTitle("File Explorer");
+		
 		BorderPane pane = new BorderPane();
 		canvas = new Canvas();
 		file = new Menu("FILE");
@@ -104,9 +110,10 @@ public class Whiteboard extends Application
 		open = new MenuItem("OPEN");
 		save  = new MenuItem("SAVE"); 
 		savePNG = new MenuItem("Save as PNG");
-		
 		menu.getMenus().add(file);
 		file.getItems().addAll(open,save, savePNG);
+		
+		
 		//	CREATING BUTTONS AND OTHER OBJECTS
 		
 		HBox buttonBox = new HBox();
@@ -124,14 +131,14 @@ public class Whiteboard extends Application
 		Button addOval = new Button("Oval");
 		Button addLine = new Button("Line");
 		Button addText = new Button("Text");
-		
 		Button removeShape = new Button("Remove this object"); //Saaj's code		
 		Button moveToFront = new Button("Move to Front"); //Saaj's code		
 		Button moveToBack = new Button("Move to Back"); //Saaj's code	
 		Button changeText = new Button("Change Text");
-				
 		Button colorPicker = new Button("Color");
 		Button doneColorPicker = new Button("Done choosing color");
+		//Button save = new Button("Save");
+		//Button open = new Button("Open");
 		ColorPicker cp = new ColorPicker();	//create a new ColorPicker
 	
 		TextField textBox = new TextField();
@@ -142,10 +149,13 @@ public class Whiteboard extends Application
 		table.setPrefWidth(stage.getWidth());
 		table.setPrefHeight(365);  //saaj's code
 		FileChooser fileChooser = new FileChooser();
+		//fileChooser.
+
+		/*
 		nameColumn = new TableColumn<>("Name");
 		nameColumn.setPrefWidth(stage.getWidth()/10);
 		nameColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, SimpleStringProperty>("name"));
-
+		 */
 		
 		xColumn = new TableColumn<>("X");
 		xColumn.setPrefWidth(stage.getWidth()/8.05); //saaj's code
@@ -166,6 +176,27 @@ public class Whiteboard extends Application
 		table.getColumns().addAll(xColumn, yColumn, widthColumn, heightColumn);
 		table.setMaxWidth(stage.getWidth()/2);
 		//table.setPadding(new Insets(10, 10, 10, 10));
+		
+		
+		//Server Set Up
+		//###########################################################################################
+		if(isServer)
+		{
+			ServerClass server = new ServerClass(port, controller);
+			server.start();
+			//ServerClass server = new ServerClass(canvas, table, controller);
+		}
+		
+		
+		
+		
+		
+		
+		//#############################################################################################
+		
+		
+			
+		
 		//INITIALIZING OBJECTS
 		
 		changeText.setVisible(false);
@@ -183,17 +214,19 @@ public class Whiteboard extends Application
 		textInfo.setSpacing(5);
 		textInfo.setPadding(new Insets(10, 0, 0, 10));
        // ObservableList<String> listOfTexts = FXCollections.observableArrayList(,, );
-		List<String> list = new ArrayList<>();
+		ArrayList<String> list = new ArrayList<>();
 		List<String> fontList = javafx.scene.text.Font.getFamilies();
-				for(String f: fontList)
-				{
+		for(String f: fontList)
+		{
 			list.add(f);
-		}        
-				ChoiceBox dropDown = new ChoiceBox();
+		}
+		
+        ChoiceBox dropDown = new ChoiceBox();
         dropDown.setVisible(false);
         dropDown.setDisable(true);
 		dropDown.getItems().addAll(list);
 		textBox.setPromptText("Enter text here");
+		
 		//open Button
 		open.setOnAction(new EventHandler(){
 			public void handle(Event e)
@@ -234,14 +267,14 @@ public class Whiteboard extends Application
 				}
 			}
 		});
-			
-				//save button
+	
+		//save button
 		save.setOnAction(new EventHandler(){
 			public void handle(Event e)
 			{ 
 				
 				File input = fileChooser.showSaveDialog(opener);
-					
+				
 				try 
 				{
 					XMLEncoder xml = new XMLEncoder( new BufferedOutputStream(new FileOutputStream(input)));
@@ -263,7 +296,6 @@ public class Whiteboard extends Application
 				}
 			}
 		});
-				//rectangle button
 		
 		savePNG.setOnAction(new EventHandler(){
 
@@ -288,8 +320,8 @@ public class Whiteboard extends Application
 			}
 			
 		});
-		//BufferedImage image = (BufferedImage) createImage(3,3);
 		
+		//rectangle button		
 		addRect.setOnAction(new EventHandler()
 				{
 					public void handle(Event event) 
@@ -297,6 +329,10 @@ public class Whiteboard extends Application
 						DRectModel model = new DRectModel();
 						DRect rect = new DRect(model);
 						controller.addRectangle( rect);	
+						if(isServer)
+						{
+							 doSend();
+						}
 					}
 				});
 		
@@ -308,6 +344,10 @@ public class Whiteboard extends Application
 						DOvalModel model = new DOvalModel();
 						DOval oval = new DOval(model);
 						controller.addEllipse( oval);
+						if (isServer)
+						{
+							 doSend();
+						}
 					}
 				});
 		
@@ -318,6 +358,10 @@ public class Whiteboard extends Application
 				DLineModel model = new DLineModel();
 				DLine line = new DLine(model);
 				controller.addLine(line);
+				if (isServer)
+				{
+					 doSend();
+				}
 			}
 		});
 		
@@ -329,7 +373,11 @@ public class Whiteboard extends Application
 				DTextModel model = new DTextModel();
 				DText text = new DText(model);
 				controller.addText( text); //Saaj's code
-				}
+				if(isServer)
+				{
+					 doSend();
+				}	
+			}
 				//catch(Exception exception){
 					//System.out.println("Something is wrong. Please check to make sure that you have written something in the text box and have chosen a font");
 				//}
@@ -399,28 +447,30 @@ public class Whiteboard extends Application
 		//Adding in the clicking component
 		canvas.setOnMouseClicked(new EventHandler<MouseEvent>()
 		{
+
 			public void handle(MouseEvent event)
 			{
 				drag = false;
 				resize = false;
-			
-				  orgSceneX = event.getSceneX();
-		          orgSceneY = event.getSceneY();
+				orgSceneX = event.getSceneX();
+		        orgSceneY = event.getSceneY();
 				double middleX =  event.getX();
 				double middleY = event.getY();
 				boolean obj = false;
 				for (DShape d: controller.getObjects())
 				{
 					DShapeModel shape = d.getModel();
-					if(middleX >= shape.getX() +4.5 && middleX <= shape.getX() + shape.getWidth() - 4.5)
+					if(middleX >= shape.getX() +4.5 && middleX <= shape.getX() + shape.getWidth() - 4.5)					
 					{
-						if (middleY >= shape.getY() +4.5 && middleY <= shape.getY() + shape.getHeight() - 4.5)
+						if (middleY >= shape.getY() +4.5 && middleY <= shape.getY() + shape.getHeight() - 4.5)				
 						{
-
-							if(d != focusedObject)
-							{
+							//if(d != focusedObject)
+							//{
 								makeUnfocused(); //saaj's code
 								focusedObject = d;
+								//System.out.println("This is the current model X: " + focusedObject.getModel().getX());
+								//System.out.println("This is the current model X: " + focusedObject.getModel().getX());
+
 								controller.getObjects().remove(focusedObject);
 								controller.getObjects().add(0, focusedObject);
 								canvas.draw(controller.getObjects(), table);
@@ -435,20 +485,20 @@ public class Whiteboard extends Application
 								obj = true;
 								//System.out.println(focusedObject.toString());
 								break;
-							}
-							else
-							{
-								removeTextInfo(textBox, dropDown, changeText);
-								obj = false;
-								break;
-							}	
+							//}
+							//else
+							//{
+							//	removeTextInfo(textBox, dropDown, changeText);
+							//	obj = false;
+							//	break;
+							//}	
 						}
 					}
 				}
 				if (!obj)
 				{
 					removeTextInfo(textBox, dropDown, changeText);
-					//makeUnfocused(); //Saaj's Code
+					makeUnfocused(); //Saaj's Code
 					hideButtons(removeShape, moveToFront, moveToBack); //Saaj's code
 				}
 				if (focusedObject != null)
@@ -507,102 +557,96 @@ public class Whiteboard extends Application
 			}
 		});
 		*/
-
+		
 		canvas.setOnMouseDragged(new EventHandler<MouseEvent>(){
 			@Override
 			public void handle(MouseEvent t) {
 				if(focusedObject != null)
 				{
-			
-				double middleX =  t.getX();
-				double middleY = t.getY();
-				DShapeModel model = focusedObject.getModel();
-				for (DShape d: controller.getObjects())
-				{
-					
-					DShapeModel shape = d.getModel();
-					if(middleX >= shape.getX() +4.5 && middleX <= shape.getX() + shape.getWidth() - 4.5)
-					{
-						if (middleY >= shape.getY() +4.5 && middleY <= shape.getY() + shape.getHeight() - 4.5)
-						{
-							drag = true;
-						}
-					}
-				}
-				
-				for(Rectangle knob : knobs)
-				{
-					if(middleX >= knob.getX()  && middleX <= knob.getX() + knob.getWidth())
-					{
-						if(middleY >= knob.getY()  && middleY <= knob.getY() + knob.getHeight())
-						{
-							resize = true;
-						}
-					}
-				}
-				if(resize)
-				{
-					
-				//	System.out.println("Resizing");
-					
-					//knob 0
-					if(middleX >= knobs[0].getX()  && middleX <= knobs[0].getX() + knobs[0].getWidth())
-					{
-						knobs[0].setX(middleX- (knobs[0].getWidth()/2));
-						knobs[1].setX(middleX- (knobs[0].getWidth()/2));
-						focusedObject.getModel().setWidth((int)(knobs[2].getX() - knobs[0].getX()));
-					}
-					if(middleY >= knobs[0].getY()  && middleY <= knobs[0].getY() + knobs[0].getHeight())
-					{						
-						knobs[0].setY(middleY- knobs[0].getHeight()/2);
-						knobs[2].setY(middleY- knobs[0].getWidth()/2);
-						focusedObject.getModel().setHeight((int)(knobs[1].getY() - knobs[0].getY()));
-					}
-					
-					//knob 1
-				 if(middleX >= knobs[1].getX()  && middleX <= knobs[1].getX() + knobs[1].getWidth())
-					{
-						knobs[1].setX(middleX- knobs[1].getWidth()/2);
-						knobs[0].setX(middleX- knobs[1].getWidth()/2);
-						focusedObject.getModel().setWidth((int)(knobs[3].getX() - knobs[1].getX()));
-					}
-				 if(middleY >= knobs[1].getY()  && middleY <= knobs[1].getY() + knobs[1].getHeight())
+			          
+					double middleX =  t.getX();
+					double middleY = t.getY();
+					DShapeModel model = focusedObject.getModel();
+					for (DShape d: controller.getObjects())
 					{
 						
-						knobs[1].setY(middleY- knobs[1].getHeight()/2);
-						knobs[3].setY(middleY- knobs[1].getHeight()/2);
-						focusedObject.getModel().setHeight((int)(knobs[1].getY() - knobs[0].getY()));
+						DShapeModel shape = d.getModel();
+						if(middleX >= shape.getX() +4.5 && middleX <= shape.getX() + shape.getWidth() - 4.5)
+						{
+							if (middleY >= shape.getY() +4.5 && middleY <= shape.getY() + shape.getHeight() - 4.5)
+							{
+								drag = true;
+							}
+						}
 					}
-					
-				 //knob 2
-				 if(middleX >= knobs[2].getX()  && middleX <= knobs[2].getX() + knobs[2].getWidth())
+					for(Rectangle knob : knobs)
 					{
-						knobs[2].setX(middleX- knobs[2].getWidth()/2);
-						knobs[3].setX(middleX- knobs[2].getWidth()/2);
-						focusedObject.getModel().setWidth((int)(knobs[2].getX() - knobs[0].getX()));
+						if(middleX >= knob.getX()  && middleX <= knob.getX() + knob.getWidth())
+						{
+							if(middleY >= knob.getY()  && middleY <= knob.getY() + knob.getHeight())
+							{
+								resize = true;
+							}
+						}
 					}
-				 if(middleY >= knobs[2].getY()  && middleY <= knobs[2].getY() + knobs[2].getHeight())
+					if(resize)
 					{
-						
-						knobs[2].setY(middleY- knobs[2].getHeight()/2);
-						knobs[0].setY(middleY- knobs[0].getHeight()/2);
-						focusedObject.getModel().setHeight((int)(knobs[3].getY() - knobs[2].getY()));
-					}
+
+						//knob 0
+						if(middleX >= knobs[0].getX()  && middleX <= knobs[0].getX() + knobs[0].getWidth())
+						{
+							knobs[0].setX(middleX- (knobs[0].getWidth()/2));
+							knobs[1].setX(middleX- (knobs[0].getWidth()/2));
+							focusedObject.getModel().setWidth((int)(knobs[2].getX() - knobs[0].getX()));
+						}
+						if(middleY >= knobs[0].getY()  && middleY <= knobs[0].getY() + knobs[0].getHeight())
+						{						
+							knobs[0].setY(middleY- knobs[0].getHeight()/2);
+							knobs[2].setY(middleY- knobs[0].getWidth()/2);
+							focusedObject.getModel().setHeight((int)(knobs[1].getY() - knobs[0].getY()));
+						}
+						//knob 1
+						 if(middleX >= knobs[1].getX()  && middleX <= knobs[1].getX() + knobs[1].getWidth())
+							{
+								knobs[1].setX(middleX- knobs[1].getWidth()/2);
+								knobs[0].setX(middleX- knobs[1].getWidth()/2);
+								focusedObject.getModel().setWidth((int)(knobs[3].getX() - knobs[1].getX()));
+							}
+						 if(middleY >= knobs[1].getY()  && middleY <= knobs[1].getY() + knobs[1].getHeight())
+							{
+								
+								knobs[1].setY(middleY- knobs[1].getHeight()/2);
+								knobs[3].setY(middleY- knobs[1].getHeight()/2);
+								focusedObject.getModel().setHeight((int)(knobs[1].getY() - knobs[0].getY()));
+							}
+						//knob 2
+						 if(middleX >= knobs[2].getX()  && middleX <= knobs[2].getX() + knobs[2].getWidth())
+							{
+								knobs[2].setX(middleX- knobs[2].getWidth()/2);
+								knobs[3].setX(middleX- knobs[2].getWidth()/2);
+								focusedObject.getModel().setWidth((int)(knobs[2].getX() - knobs[0].getX()));
+							}
+						 if(middleY >= knobs[2].getY()  && middleY <= knobs[2].getY() + knobs[2].getHeight())
+							{
+								
+								knobs[2].setY(middleY- knobs[2].getHeight()/2);
+								knobs[0].setY(middleY- knobs[0].getHeight()/2);
+								focusedObject.getModel().setHeight((int)(knobs[3].getY() - knobs[2].getY()));
+							}
+						 canvas.draw(controller.getObjects(), table);
 					
-			 	   canvas.draw(controller.getObjects(), table);
-				}
-				else if(drag)
-				{
-				if(focusedObject != null)
-				{
-			           int offsetX = (int) (middleX - (focusedObject.getModel().getWidth()/2) );
-			           int offsetY = (int) (middleY - (focusedObject.getModel().getHeight()/2));
+					}
 			           
-			           
+					if(focusedObject != null)
+					{
+				           int offsetX = (int) (middleX - (focusedObject.getModel().getWidth()/2) );
+				           int offsetY = (int) (middleY - (focusedObject.getModel().getHeight()/2));
+					
 			          // DShapeModel model = new DShapeModel(focusedObject.getModel().getWidth()/2 + offsetX, focusedObject.getModel().getHeight()/2 + offsetY, focusedObject.getModel().getWidth(), focusedObject.getModel().getHeight(), focusedObject.getModel().getColor());
 			           if (focusedObject instanceof DRect) 
 						{
-			        	   
+			        	   //((DRect) focusedObject).changeX(offsetX);
+			        	   //((DRect) focusedObject).changeY(offsetY);
 			        	   model.setX(offsetX);
 			        	   model.setY(offsetY);
 			        	   controller.getObjects().remove(focusedObject);
@@ -633,11 +677,8 @@ public class Whiteboard extends Application
 						} 
 						else if (focusedObject instanceof DLine) 
 						{
-							model.setX((int)t.getX());
-							model.setY((int)t.getY());
-							model.setWidth(50+(int)t.getX());
-							model.setHeight(50+(int)t.getY());
-				        	   
+							model.setX(offsetX);
+				        	   model.setY(offsetY);
 				        	   controller.getObjects().remove(focusedObject);
 				        	   focusedObject.setModel(model);
 				        	   controller.getObjects().add(0, focusedObject);
@@ -666,33 +707,23 @@ public class Whiteboard extends Application
 				        	//   canvas.draw(controller.getObjects(), table);
 				        	//   focusedObject = text;
 						}
+					}
 			           //focusedObject.getModel().setX(offsetX + (focusedObject.getModel().getWidth()/2));
 			           //focusedObject.getModel().setY(offsetY+ (focusedObject.getModel().getHeight()/2));
 				}
-				
 			}
-			}
-			}
-			
 		});
 		
 		
 		
 		// FINISHING OFF THE OBJECTS
-		buttonBox.getChildren().add(add);
-		buttonBox.getChildren().add(addRect);
-		buttonBox.getChildren().add(addOval);
-		buttonBox.getChildren().add(addLine);
-		buttonBox.getChildren().add(addText);
-		
-		colorBox.getChildren().add(colorPicker);
-		colorBox.getChildren().add(doneColorPicker);
-
+		buttonBox.getChildren().addAll(add, addRect, addOval, addLine, addText);
+		colorBox.getChildren().addAll(colorPicker, doneColorPicker);
 		textInfo.getChildren().addAll(textBox, dropDown, changeText);
-		vbox.setPadding(new Insets(10, 10, 40, 10)); //saaj's code				
-		vbox.getChildren().addAll(menu,buttonBox, colorBox, textInfo, objectInfo, table);
 		
-
+		vbox.setPadding(new Insets(10, 10, 40, 10)); //saaj's code				
+		vbox.getChildren().addAll(menu, buttonBox, colorBox, textInfo, objectInfo, table);
+		
 		pane.setCenter(canvas);
 		pane.setLeft(vbox);
 		
@@ -704,8 +735,8 @@ public class Whiteboard extends Application
 	
 	public void makeFocused()
 	{
-		DShapeModel model = focusedObject.getModel();
-		knobs = model.drawKnobs();
+		
+		knobs = focusedObject.getModel().drawKnobs();
 		canvas.getChildren().addAll(knobs);
 		
 	}
@@ -809,7 +840,7 @@ public class Whiteboard extends Application
 	public static void main(String[] args){
 		launch(args);
 	}
-*/
+     */
 	public void modelChanged(DShapeModel model) {
 		// TODO Auto-generated method stub
 		
@@ -833,6 +864,14 @@ public class Whiteboard extends Application
 		change.setVisible(false);
 		change.setDisable(true);
 	}
-	
-	
+	public void  doSend()
+	{
+		
+	}
+	/*
+	public Whiteboard getWhiteboard()
+	{
+		return this;
+	}
+	*/
 }
