@@ -7,7 +7,7 @@ public class DLine extends DShape {
 
 	public DLine(DLineModel line)
 	{
-		super(line);
+		super(line, "line");
 	}
 	
 	@Override

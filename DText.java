@@ -10,7 +10,7 @@ public class DText extends DShape {
 	Font font;
 	public DText(DTextModel text)
 	{
-		super(text);
+		super(text, "text");
 		theText = "Hello";
 		font = new Font("Dialog", 25);
 	}

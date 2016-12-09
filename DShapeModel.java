@@ -2,13 +2,15 @@ package WhiteBoard;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class DShapeModel {
+public class DShapeModel 
+{
 	
 	private int x;
 	private int y;
 	private int width;
 	private int height;
 	private Color color;
+	public String type;
 	Canvas c = new Canvas();
 	public DShapeModel()
 	{
@@ -56,12 +58,12 @@ public class DShapeModel {
 	
 	public void setX(int xPosition)
 	{
-		this.x = xPosition;
+		x = xPosition;
 	}
 
 	public void setY(int yPosition)
 	{
-		this.y = yPosition;
+		y = yPosition;
 	}
 	
 	public void setWidth(int width)
@@ -78,18 +80,13 @@ public class DShapeModel {
 	{
 		this.color = color;
 	}
-	public String getType(DShape d)
+	public void setType(String type)
 	{
-		if (d instanceof DRect)
-		return "rectangle";
-		else if (d instanceof DOval)
-			return "oval";
-		else if(d instanceof DText)
-			return "text";
-		else if(d instanceof DLine)
-			return "line";
-		else 
-			return null;
+		this.type = type;
+	}
+	public String getType()
+	{
+		return type;
 	}
 	
 	public Rectangle[] drawKnobs()
@@ -100,10 +97,13 @@ public class DShapeModel {
 		Rectangle knob4 = null;
 		if(x - 5 < 0 || y - 5 < 0)
 		{
+			
 			knob1 = new Rectangle(x-9, y-9, 9, 9);
 		}
 		else
 		{
+			System.out.println("This is right");
+
 			knob1 = new Rectangle(x, y, 9, 9);
 		}
 		if (x - 5 < 0 || y + 5 > c.getHeight() )
@@ -137,36 +137,4 @@ public class DShapeModel {
 		knobs[3] = knob4;
 		return knobs;
 	}
-	//############################################################################################################################################
-	public Rectangle[] drawLineKnobs(){
-		Rectangle[] knobs = new Rectangle[2];
-		
-		Rectangle topRight = null;
-		Rectangle botLeft = null;
-		
-		if(x - 5 < 0 || y - 5 < 0)
-		{
-			topRight = new Rectangle(x-4, y-4, 9, 9);
-		}
-		else
-		{
-			topRight = new Rectangle(x-5, y-5, 9, 9);
-		}
-		if (x + width + 5 > c.getWidth() || y + height + 5 > c.getHeight())
-		{
-			botLeft = new Rectangle( width - 4,  height - 4, 9, 9);
-		}
-		else
-		{
-			botLeft = new Rectangle(x + width - 5, y + height - 5, 9, 9);
-		}
-		
-		
-		
-		knobs[0] = topRight;
-		knobs[1] = botLeft;
-		
-		return knobs;
-	}
-	//############################################################################################################################################
 }

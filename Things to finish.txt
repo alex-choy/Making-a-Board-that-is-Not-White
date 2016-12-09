@@ -1,0 +1,16 @@
+Fixing the Line Resize Bug (Does not resize according to the anchor point we are dragging)
+Fix the movement (make it smoother)
+Fix the resizing (make it work properly)
+Be able to reflect the object if the knobs go past the anchor knobs
+Add Server GUI
+Add Client GUI
+Add Offline GUI
+Implement the Server stuff
+
+
+
+Features to work on:
+Update Text as we type it
+Clicking on an object on the table and automatically selecting that object on the canvas
+Work on making the Start Menu GUI look better
+Automatically start with a font selected in the font bar

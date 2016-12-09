@@ -8,7 +8,7 @@ import javafx.scene.shape.Shape;
 public class DOval extends DShape {
 
 	public DOval(DOvalModel oval) {
-		super(oval);
+		super(oval, "oval");
 	}
 
 	@Override

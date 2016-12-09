@@ -26,6 +26,7 @@ public class Canvas extends Pane {
 
 	}
 
+	/*
 	public void dragMouse() 
 	{
 		super.setOnMouseDragged(new EventHandler()
@@ -37,19 +38,19 @@ public class Canvas extends Pane {
 				});
 	}
 	
-	
+	*/
 	
 	public void draw(ArrayList<DShape> list, TableView<TableInfo> table) 
 	{
 		System.out.println("In the canvas class " + list.size());
 		getChildren().clear();
 		table.getItems().clear();
-		table.refresh();
+		//table.refresh();
 		for(int i = list.size()-1; i >=0; i--)
 		{
 			DShape other = list.get(list.size()-i-1);
 			DShapeModel model = other.getModel();
-			Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(model.getType(new DRect(new DRectModel()) )), model.getX(),model.getY(), model.getWidth(), model.getHeight());
+			Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(model.getType()), model.getX(),model.getY(), model.getWidth(), model.getHeight());
 			table.getItems().add(info);
 			table.refresh();		
 			DShape o = list.get(i);

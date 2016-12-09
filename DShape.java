@@ -6,9 +6,11 @@ import javafx.scene.shape.Shape;
 public class DShape {
 	private DShapeModel model;
   
-  public DShape(DShapeModel model)
+  public DShape(DShapeModel model, String type)
   {
+	  
 	  this.model = model;
+	  model.setType(type);
   }
   public DShapeModel getModel()
   {

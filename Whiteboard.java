@@ -5,9 +5,21 @@ import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.application.Application;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -23,12 +35,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
@@ -41,6 +51,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class Whiteboard extends Application 
@@ -49,10 +60,9 @@ public class Whiteboard extends Application
 	MenuBar menu;
 	MenuItem open;
 	MenuItem save;
-	
-	   double orgSceneX, orgSceneY;
-	   double orgTranslateX, orgTranslateY;
-	   BorderPane pane;
+	double orgSceneX, orgSceneY;
+	double orgTranslateX, orgTranslateY;
+	BorderPane pane;
 	boolean drag = false;
 	boolean resize = false;
 	
@@ -77,6 +87,9 @@ public class Whiteboard extends Application
 		stage.setHeight(610);
 		stage.setWidth(1100);
 		
+		Stage opener = new Stage();
+		opener.setTitle("File Explorer");
+		
 		BorderPane pane = new BorderPane();
 		canvas = new Canvas();
 		file = new Menu("FILE");
@@ -86,6 +99,8 @@ public class Whiteboard extends Application
 		
 		menu.getMenus().add(file);
 		file.getItems().addAll(open,save);
+		
+		
 		//	CREATING BUTTONS AND OTHER OBJECTS
 		
 		HBox buttonBox = new HBox();
@@ -103,20 +118,14 @@ public class Whiteboard extends Application
 		Button addOval = new Button("Oval");
 		Button addLine = new Button("Line");
 		Button addText = new Button("Text");
-		
 		Button removeShape = new Button("Remove this object"); //Saaj's code		
 		Button moveToFront = new Button("Move to Front"); //Saaj's code		
 		Button moveToBack = new Button("Move to Back"); //Saaj's code	
 		Button changeText = new Button("Change Text");
-		changeText.setVisible(false);
-		changeText.setDisable(true);
-		objectInfo.setSpacing(5);		
-		objectInfo.setPadding(new Insets(10, 10, 10, 10)); //saaj's code		
-		objectInfo.getChildren().addAll(removeShape, moveToFront, moveToBack); //saaj's code		
-		hideButtons(removeShape, moveToFront, moveToBack);  //Saaj's code
-		
 		Button colorPicker = new Button("Color");
 		Button doneColorPicker = new Button("Done choosing color");
+		//Button save = new Button("Save");
+		//Button open = new Button("Open");
 		ColorPicker cp = new ColorPicker();	//create a new ColorPicker
 	
 		TextField textBox = new TextField();
@@ -126,11 +135,14 @@ public class Whiteboard extends Application
 		Controller controller = new Controller(canvas, table); //Saaj's code
 		table.setPrefWidth(stage.getWidth());
 		table.setPrefHeight(365);  //saaj's code
-		
+		FileChooser fileChooser = new FileChooser();
+		//fileChooser.
+
+		/*
 		nameColumn = new TableColumn<>("Name");
 		nameColumn.setPrefWidth(stage.getWidth()/10);
 		nameColumn.setCellValueFactory(new PropertyValueFactory<TableInfo, SimpleStringProperty>("name"));
-
+		 */
 		
 		xColumn = new TableColumn<>("X");
 		xColumn.setPrefWidth(stage.getWidth()/8.05); //saaj's code
@@ -151,7 +163,18 @@ public class Whiteboard extends Application
 		table.getColumns().addAll(xColumn, yColumn, widthColumn, heightColumn);
 		table.setMaxWidth(stage.getWidth()/2);
 		//table.setPadding(new Insets(10, 10, 10, 10));
+		
+		
+		
+		
 		//INITIALIZING OBJECTS
+		
+		changeText.setVisible(false);
+		changeText.setDisable(true);
+		objectInfo.setSpacing(5);		
+		objectInfo.setPadding(new Insets(10, 10, 10, 10)); //saaj's code		
+		objectInfo.getChildren().addAll(removeShape, moveToFront, moveToBack); //saaj's code		
+		hideButtons(removeShape, moveToFront, moveToBack);  //Saaj's code
 		doneColorPicker.setDisable(true);
         doneColorPicker.setVisible(false);
         cp.setValue(Color.WHITE);				//initialize the color as white
@@ -162,18 +185,89 @@ public class Whiteboard extends Application
 		textInfo.setPadding(new Insets(10, 0, 0, 10));
        // ObservableList<String> listOfTexts = FXCollections.observableArrayList(,, );
 		ArrayList<String> list = new ArrayList<>();
-		list.add("Times New Roman");
-		list.add("Calibri");
-		list.add( "Arial");
+		List<String> fontList = javafx.scene.text.Font.getFamilies();
+		for(String f: fontList)
+		{
+			list.add(f);
+		}
+		
         ChoiceBox dropDown = new ChoiceBox();
         dropDown.setVisible(false);
         dropDown.setDisable(true);
 		dropDown.getItems().addAll(list);
 		textBox.setPromptText("Enter text here");
-		//rectangle button
 		
-		//BufferedImage image = (BufferedImage) createImage(3,3);
+		//open Button
+		open.setOnAction(new EventHandler(){
+			public void handle(Event e)
+			{
+				File input = fileChooser.showOpenDialog(opener);
+				
+				try
+				{
+					InputStream input1 = new FileInputStream(input);
+					XMLDecoder xml = new XMLDecoder(input1);
+					DShapeModel[] shapes = (DShapeModel[]) xml.readObject();
+					controller.getObjects().clear();
+					for(DShapeModel d: shapes)
+					{
+						if(d.getType().equals("rectangle"))
+						{
+							controller.getObjects().add(0, new DRect((DRectModel) d));
+						}
+						else if(d.getType().equals("oval"))
+						{
+							controller.getObjects().add(0, new DOval((DOvalModel) d));
+						}
+						else if(d.getType().equals("line"))
+						{
+							controller.getObjects().add(0, new DLine((DLineModel) d));
+						}
+						else if(d.getType().equals("text"))
+						{
+							controller.getObjects().add(0, new DText((DTextModel) d));
+						}
+					}
+					input1.close();
+					canvas.draw(controller.getObjects(), table);
+				}
+				catch(Exception exception)
+				{
+					System.out.println("Can not find file " + exception);
+				}
+			}
+		});
+	
+		//save button
+		save.setOnAction(new EventHandler(){
+			public void handle(Event e)
+			{ 
+				
+				File input = fileChooser.showSaveDialog(opener);
+				
+				try 
+				{
+					XMLEncoder xml = new XMLEncoder( new BufferedOutputStream(new FileOutputStream(input)));
+					ArrayList<DShape> x = controller.getObjects();
+					DShapeModel[] shapes = new DShapeModel[x.size()];
+					int index = 0;
+					for(int i = x.size() - 1; i >= 0; i--)
+					{
+						shapes[index] = x.get(i).getModel();
+						index++;
+					}
+					xml.writeObject(shapes);
+					xml.close();
+					System.out.println("File has been created");
+				} 
+				catch (Exception e1) 
+				{
+					System.out.println("File System did not work");
+				}
+			}
+		});
 		
+		//rectangle button		
 		addRect.setOnAction(new EventHandler()
 				{
 					public void handle(Event event) 
@@ -298,10 +392,13 @@ public class Whiteboard extends Application
 					{
 						if (middleY >= shape.getY() && middleY <= shape.getY() + shape.getHeight())
 						{
-							if(d != focusedObject)
-							{
+							//if(d != focusedObject)
+							//{
 								makeUnfocused(); //saaj's code
 								focusedObject = d;
+								System.out.println("This is the current model X: " + focusedObject.getModel().getX());
+								System.out.println("This is the current model X: " + focusedObject.getModel().getX());
+
 								controller.getObjects().remove(focusedObject);
 								controller.getObjects().add(0, focusedObject);
 								canvas.draw(controller.getObjects(), table);
@@ -316,13 +413,13 @@ public class Whiteboard extends Application
 								obj = true;
 								//System.out.println(focusedObject.toString());
 								break;
-							}
-							else
-							{
-								removeTextInfo(textBox, dropDown, changeText);
-								obj = false;
-								break;
-							}	
+							//}
+							//else
+							//{
+							//	removeTextInfo(textBox, dropDown, changeText);
+							//	obj = false;
+							//	break;
+							//}	
 						}
 					}
 				}
@@ -401,7 +498,8 @@ public class Whiteboard extends Application
 			          // DShapeModel model = new DShapeModel(focusedObject.getModel().getWidth()/2 + offsetX, focusedObject.getModel().getHeight()/2 + offsetY, focusedObject.getModel().getWidth(), focusedObject.getModel().getHeight(), focusedObject.getModel().getColor());
 			           if (focusedObject instanceof DRect) 
 						{
-			        	   
+			        	   //((DRect) focusedObject).changeX(offsetX);
+			        	   //((DRect) focusedObject).changeY(offsetY);
 			        	   model.setX(offsetX);
 			        	   model.setY(offsetY);
 			        	   controller.getObjects().remove(focusedObject);
@@ -471,20 +569,13 @@ public class Whiteboard extends Application
 		
 		
 		// FINISHING OFF THE OBJECTS
-		buttonBox.getChildren().add(add);
-		buttonBox.getChildren().add(addRect);
-		buttonBox.getChildren().add(addOval);
-		buttonBox.getChildren().add(addLine);
-		buttonBox.getChildren().add(addText);
-		
-		colorBox.getChildren().add(colorPicker);
-		colorBox.getChildren().add(doneColorPicker);
-
+		buttonBox.getChildren().addAll(add, addRect, addOval, addLine, addText);
+		colorBox.getChildren().addAll(colorPicker, doneColorPicker);
 		textInfo.getChildren().addAll(textBox, dropDown, changeText);
-		vbox.setPadding(new Insets(10, 10, 40, 10)); //saaj's code				
-		vbox.getChildren().addAll(menu,buttonBox, colorBox, textInfo, objectInfo, table);
 		
-
+		vbox.setPadding(new Insets(10, 10, 40, 10)); //saaj's code				
+		vbox.getChildren().addAll(menu, buttonBox, colorBox, textInfo, objectInfo, table);
+		
 		pane.setCenter(canvas);
 		pane.setLeft(vbox);
 		
@@ -496,14 +587,8 @@ public class Whiteboard extends Application
 	
 	public void makeFocused()
 	{
-		DShapeModel model = focusedObject.getModel();
-		//####################################################################################################################################3
-		if(focusedObject instanceof DLine){
-			knobs = model.drawLineKnobs();
-		}
-		else{
-			knobs = model.drawKnobs();
-		}//#######################################################################################################################################
+		
+		knobs = focusedObject.getModel().drawKnobs();
 		canvas.getChildren().addAll(knobs);
 		
 	}
@@ -606,8 +691,8 @@ public class Whiteboard extends Application
     /*
 	public static void main(String[] args){
 		launch(args);
-	}*/
-
+	}
+     */
 	public void modelChanged(DShapeModel model) {
 		// TODO Auto-generated method stub
 		

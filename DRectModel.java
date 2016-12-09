@@ -12,5 +12,10 @@ public class DRectModel extends DShapeModel {
 	{
 		super(x, y, w, h, c);
 	}
+	
+	public DRectModel getModel()
+	{
+		return this;
+	}
 
 }

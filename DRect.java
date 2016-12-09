@@ -7,17 +7,39 @@ import javafx.scene.shape.Shape;
 
 public class DRect extends DShape {
 
+	Rectangle r = null;
+	DShapeModel model = null;
 	public DRect(DRectModel rect)
 	{
-		super(rect);
+		super(rect, "rectangle");
+		model = super.getModel();
+		r = new Rectangle(model.getX(),model.getY(),model.getWidth(), model.getHeight());
+		r.setFill(model.getColor());
 	}
+	
+	public void changeX(int x)
+	{
+		model.setX(x);
+		//System.out.println("This is the current model X: " + model.getX());
+		//r.setTranslateX(x);
+	}
+	
+	public void changeY(int y)
+	{
+		model.setY(y);
+		//System.out.println("This is the current model Y: " + model.getY());
+		//r.setTranslateY(y);
+	}
+	
 	
 	@Override
 	public Shape draw()
 	{
-		DShapeModel model = super.getModel();
-		Shape drawn = new Rectangle(model.getX(),model.getY(),model.getWidth(), model.getHeight());
-		drawn.setFill(model.getColor());
-		return drawn;
+		r.setTranslateX(model.getX() - r.getX());
+		r.setTranslateY(model.getY() - r.getY());
+		r.setWidth(model.getWidth());
+		r.setHeight(model.getHeight());
+		r.setFill(model.getColor());
+		return r;
 	}
 }

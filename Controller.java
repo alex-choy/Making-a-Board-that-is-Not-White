@@ -35,18 +35,16 @@ public class Controller {
 	public void addRectangle( DRect rect){	
 		list.add(0, rect);
 		canvas.draw(list, table);
-		System.out.println("Added Rectangle");
 	}
 	public void addEllipse(DOval oval)
 	{		
 		list.add(0, oval);
 		canvas.draw(list, table);
-		System.out.println("Added Ellipse");
 	}
 	public void addText(DText t) //Saaj's Code
 	{
 		DShapeModel model = t.getModel();
-		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(model.getType(new DText(new DTextModel()) )), model.getX(), model.getY(), model.getWidth(), model.getHeight());
+		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(model.getType()), model.getX(), model.getY(), model.getWidth(), model.getHeight());
 		list.add(0, t);
 		canvas.draw(list, table);
 	}
@@ -62,9 +60,9 @@ public class Controller {
 		table.refresh();
 		list.add(0, line);
 		canvas.draw(list, table);
-		//System.out.println("Added Line");
 	}
 
+	/**
 	public void addEllipse(DShapeModel oval)
 	{		
 		DShapeModel model = oval;
@@ -80,6 +78,7 @@ public class Controller {
 		System.out.println("Added Ellipse");
 	}
 	
+	*/
 	public void changeText(DText text, Font font, TextField textBox)
 	{
 		list.remove(text);
@@ -135,7 +134,7 @@ public class Controller {
 	public void removeObject(DShape d)
 	{
 		
-		System.out.println("In the controller class:" + d +"\nlist size:" + list.size());
+		//System.out.println("In the controller class:" + d +"\nlist size:" + list.size());
 		list.remove(d);
 		canvas.getChildren().remove(d);
 		canvas.draw(list, table);
