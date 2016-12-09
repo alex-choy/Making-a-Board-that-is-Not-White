@@ -603,10 +603,10 @@ public class Whiteboard extends Application
         	this.h = h;
         }
     }
-    
+    /*
 	public static void main(String[] args){
 		launch(args);
-	}
+	}*/
 
 	public void modelChanged(DShapeModel model) {
 		// TODO Auto-generated method stub
