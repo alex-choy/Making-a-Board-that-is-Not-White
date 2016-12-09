@@ -1,12 +1,12 @@
 Fixing the Line Resize Bug (Does not resize according to the anchor point we are dragging)
 Fix the movement (make it smoother)
-Fix the resizing (make it work properly)
+Fix the resizing (make it work properly) (Line doesn't resize properly)
 Be able to reflect the object if the knobs go past the anchor knobs
 Add Server GUI
-Add Client GUI
-Add Offline GUI
+//Add Client GUI
+//Add Offline GUI
 Implement the Server stuff
-Add in the PNG feature
+//Add in the PNG feature
 
 
 
