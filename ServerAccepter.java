@@ -1,5 +1,6 @@
 package WhiteBoard;
 
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -20,9 +21,11 @@ class ServerAccepter extends Thread {
                     // Get an output stream to the client, and add it to
                     // the list of outputs
                     // (our server only uses the output stream of the connection)
-                    addOutput(new ObjectOutputStream(toClient.getOutputStream()));
+                   // addOutput(new ObjectOutputStream(toClient.getOutputStream()));
                 }
-            } catch (IOException ex) {
+            }
+            catch (IOException ex) {
                 ex.printStackTrace(); 
             }
         }
+}

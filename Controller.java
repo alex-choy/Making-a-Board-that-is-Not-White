@@ -14,11 +14,13 @@ import javafx.scene.text.Text;
 public class Controller {
 	ArrayList<DShape> list;
 	Canvas canvas;
+	ConnectionStuff server;
 	TableView<TableInfo> table; // Saaj's Code
-	public Controller(Canvas canvas, TableView<TableInfo> t) //Saaj's Code
+	public Controller(Canvas canvas, TableView<TableInfo> t, ConnectionStuff server) //Saaj's Code
 	{
 		list = new ArrayList<>();
 		this.canvas = canvas;
+		this.server = server;
 		table = t; //Saaj's Code
 	}
 	
@@ -26,25 +28,29 @@ public class Controller {
 	{
 		DShapeModel model = shape.getModel();
 		model.setColor(value);
-		canvas.getChildren().remove(shape);
-		canvas.getChildren().add(shape.draw());
-		System.out.println(value);
+		int position = canvas.getIndexOfObject(shape);
+		canvas.getList().set(position, shape);
+		canvas.draw();
+		//canvas.getChildren().remove(shape);
+		//canvas.getChildren().add(shape.draw());
+		
+		//System.out.println(value);
 	}
 	public void addRectangle( DRect rect){	
 		list.add(0, rect);
-		canvas.draw(list, table);
+		canvas.draw();
 	}
 	public void addEllipse(DOval oval)
 	{		
 		list.add(0, oval);
-		canvas.draw(list, table);
+		canvas.draw();
 	}
 	public void addText(DText t) //Saaj's Code
 	{
 		DShapeModel model = t.getModel();
 		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(model.getType()), model.getX(), model.getY(), model.getWidth(), model.getHeight());
 		list.add(0, t);
-		canvas.draw(list, table);
+		canvas.draw();
 	}
 	public ArrayList<DShape> getObjects()
 	{
@@ -57,7 +63,7 @@ public class Controller {
 		table.getItems().add(info);
 		table.refresh();
 		list.add(0, line);
-		canvas.draw(list, table);
+		canvas.draw();
 	}
 
 	/**
@@ -77,13 +83,18 @@ public class Controller {
 	}
 	
 	*/
+	
+	
+	
+	
+	
 	public void changeText(DText text, Font font, TextField textBox)
 	{
 		list.remove(text);
 		text.setText(textBox.getText());
 		text.setFont(font);
 		list.add(0, text);
-		canvas.draw(list, table);
+		canvas.draw();
 	}
 	
 	
@@ -93,7 +104,7 @@ public class Controller {
 		list.add(0, shaped);
 		System.out.println("refreshed");
 		Whiteboard.TableInfo info = null;
-		canvas.draw(list, table);
+		canvas.draw();
 		/*list.add(shaped.draw());
 		for(int i = 0; i<list.size();i++)
 		{
@@ -129,29 +140,6 @@ public class Controller {
 		}*/
 		//table.refresh();
 	}
-	public void removeObject(DShape d)
-	{
-		
-		//System.out.println("In the controller class:" + d +"\nlist size:" + list.size());
-		list.remove(d);
-		canvas.getChildren().remove(d);
-		canvas.draw(list, table);
-	}
-	public void move2Back(DShape d)
-	{
-		DShape now = d;
-		list.remove(d);
-		list.add(now);
-		canvas.draw(list, table);
-		//updateTable();
-		
-	}
-	public void move2Front(DShape d)
-	{
-		DShape now = d;
-		list.remove(d);
-		list.add(0, now);
-		canvas.draw(list, table);
-		//updateTable();
-	}
+	
+	
 }

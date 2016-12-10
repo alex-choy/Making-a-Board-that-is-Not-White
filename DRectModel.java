@@ -6,6 +6,7 @@ public class DRectModel extends DShapeModel {
 	public DRectModel() 
 	{
 		super();
+		super.setType("retangle");
 	}
 	
 	public DRectModel(int x, int y, int w, int h, Color c)

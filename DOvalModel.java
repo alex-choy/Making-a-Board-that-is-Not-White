@@ -6,6 +6,7 @@ public class DOvalModel extends DShapeModel {
 	public DOvalModel()
 	{
 		super();
+		setType("oval");
 		// TODO Auto-generated constructor stub
 	}
 	

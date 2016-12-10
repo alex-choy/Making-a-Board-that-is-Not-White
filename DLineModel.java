@@ -3,9 +3,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class DLineModel extends DShapeModel {
-
-	public DLineModel() {
+	Canvas c;
+	public DLineModel(Canvas canvas) 
+	{
 		super();
+		setType("line");
+		c = canvas;
 		// TODO Auto-generated constructor stub
 	}
 	

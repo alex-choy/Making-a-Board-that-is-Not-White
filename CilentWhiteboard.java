@@ -42,13 +42,11 @@ public class CilentWhiteboard {
 	VBox vbox = null; //Saaj's change
 	DShape focusedObject = null;
 	Rectangle[] knobs = null;
-	public String name;
-	public int port;
+	public String port;
 	
-	public CilentWhiteboard(String name, int port)
+	public CilentWhiteboard(String name)
 	{
-		this.name = name;
-		this.port = port;
+		this.port = name;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -60,7 +58,8 @@ public class CilentWhiteboard {
 		stage.setWidth(1100);
 		
 		BorderPane pane = new BorderPane();
-		canvas = new Canvas();
+		TableView<TableInfo> table = new TableView<>();
+		canvas = new Canvas(table);
 		file = new Menu("FILE");
 		menu = new MenuBar();
 		open = new MenuItem("OPEN");
@@ -79,8 +78,8 @@ public class CilentWhiteboard {
 		objectInfo.setPadding(new Insets(10, 10, 10, 10)); //saaj's code			
 		
 	
-		TableView<TableInfo> table = new TableView<>();
-		Controller controller = new Controller(canvas, table); //Saaj's code
+		
+		Controller controller = new Controller(canvas, table, null); //Saaj's code
 		//Controller controller = new Controller(canvas, table); //Saaj's code
 		table.setPrefWidth(stage.getWidth());
 		table.setPrefHeight(365);  //saaj's code
@@ -111,9 +110,9 @@ public class CilentWhiteboard {
 		
 		//Server stuff
 		//#########################################################################
-		ClientHandler client = new ClientHandler(name, port, canvas, table, controller);
-		client.start();
-		
+		ConnectionStuff client = new ConnectionStuff("client", port, canvas);
+		//client.start();
+		//client.setController(controller);
 		//#######################################################################
 
         
@@ -122,8 +121,8 @@ public class CilentWhiteboard {
 
 			public void handle(MouseEvent event)
 			{
-				  orgSceneX = event.getSceneX();
-		          orgSceneY = event.getSceneY();
+				orgSceneX = event.getSceneX();
+		        orgSceneY = event.getSceneY();
 				double middleX =  event.getX();
 				double middleY = event.getY();
 				boolean obj = false;
@@ -138,9 +137,9 @@ public class CilentWhiteboard {
 							{
 								makeUnfocused(); //saaj's code
 								focusedObject = d;
-								controller.getObjects().remove(focusedObject);
-								controller.getObjects().add(0, focusedObject);
-								canvas.draw(controller.getObjects(), table);
+								//controller.getObjects().remove(focusedObject);
+								//controller.getObjects().add(0, focusedObject);
+								//canvas.draw();//null);
 								obj = true;
 								//System.out.println(focusedObject.toString());
 								break;

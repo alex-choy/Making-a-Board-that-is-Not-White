@@ -1,8 +1,10 @@
 package WhiteBoard;
+import java.io.Serializable;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class DShapeModel 
+public class DShapeModel implements Serializable
 {
 	
 	private int x;
@@ -11,7 +13,6 @@ public class DShapeModel
 	private int height;
 	private Color color;
 	public String type;
-	Canvas c = new Canvas();
 	public DShapeModel()
 	{
 		this.x = 20;		

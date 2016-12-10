@@ -121,9 +121,7 @@ public class StartMenu extends Application{
 				    System.out.println("Server number: " + result.get());
 				}
 				String r = result.get();
-				String[] rs = r.split(":");
-				
-				CilentWhiteboard cwb = new CilentWhiteboard(rs[0].trim(), Integer.parseInt(rs[1].trim()));
+				CilentWhiteboard cwb = new CilentWhiteboard(r);
 				cwb.start(stage);
 			}
 			

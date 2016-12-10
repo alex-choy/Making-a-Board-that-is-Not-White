@@ -82,7 +82,7 @@ class ClientHandler extends Thread
 					controller.getObjects().add(0, new DText((DTextModel) shape));
 				}
 			}
-		 c.draw(controller.getObjects(), table);
+		 //c.draw(controller.getObjects(), table);
 	 }
 }
 	 
