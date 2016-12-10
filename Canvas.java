@@ -42,7 +42,7 @@ public class Canvas extends Pane {
 	
 	public void draw(ArrayList<DShape> list, TableView<TableInfo> table) 
 	{
-		System.out.println("In the canvas class " + list.size());
+		//System.out.println("In the canvas class " + list.size());
 		getChildren().clear();
 		table.getItems().clear();
 		//table.refresh();

@@ -3,7 +3,7 @@ import java.awt.Graphics;
 
 import javafx.scene.shape.Shape;
 
-public class DShape {
+public class DShape extends Shape {
 	private DShapeModel model;
   
   public DShape(DShapeModel model, String type)
@@ -26,5 +26,10 @@ public class DShape {
   {
 	  return null;
   }
+@Override
+public com.sun.javafx.geom.Shape impl_configShape() {
+	// TODO Auto-generated method stub
+	return null;
+}
   
 }
