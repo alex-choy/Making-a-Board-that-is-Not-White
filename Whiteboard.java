@@ -328,6 +328,7 @@ public class Whiteboard extends Application
 					{
 						DRectModel model = new DRectModel();
 						canvas.addShape(model);
+						canvas.updateServer(server, canvas.getListAsArray(), "add");
 						//DRect rect = new DRect(model);
 						//controller.addRectangle( rect);	
 						
@@ -345,7 +346,7 @@ public class Whiteboard extends Application
 					{
 						DOvalModel model = new DOvalModel();
 						canvas.addShape(model);
-
+						canvas.updateServer(server, canvas.getListAsArray(), "add");
 						//DOval oval = new DOval(model);
 						//controller.addEllipse( oval);
 						
@@ -362,7 +363,7 @@ public class Whiteboard extends Application
 			{
 				DLineModel model = new DLineModel(canvas);
 				canvas.addShape(model);
-
+				canvas.updateServer(server, canvas.getListAsArray(), "add");
 				//DLine line = new DLine(model);
 				//controller.addLine(line);
 				
@@ -380,7 +381,7 @@ public class Whiteboard extends Application
 				//try	{
 				DTextModel model = new DTextModel();
 				canvas.addShape(model);
-				
+				canvas.updateServer(server, canvas.getListAsArray(), "add");
 				//DText text = new DText(model);
 				//controller.addText( text); //Saaj's code
 				
@@ -525,10 +526,7 @@ public class Whiteboard extends Application
 					makeFocused();
 					setUpButtons(removeShape, moveToBack, moveToFront); //saaj's code;
 				}
-				if(isServer)
-				{
-					canvas.updateServer(server, canvas.getListAsArray(), "move");
-				}
+				
 			}
 			
 		});
@@ -687,7 +685,9 @@ public class Whiteboard extends Application
 				        model.setX(offsetX);
 				        model.setY(offsetY);
 				        int position = canvas.getIndexOfObject(focusedObject);
-				        canvas.getList().set(position, focusedObject);
+				        canvas.removeObject(focusedObject);
+				        canvas.getList().add(position, focusedObject);
+				        //canvas.getList().set(position, focusedObject);
 				        focusedObject.setModel(model);
 				        canvas.draw();//server);
 				        if(isServer)

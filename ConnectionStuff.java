@@ -144,30 +144,33 @@ public class ConnectionStuff {
                  Socket toServer = new Socket(name, port);
                  // get input stream to read from server and wrap in object input stream
                  ObjectInputStream in = new ObjectInputStream(toServer.getInputStream());
-                 System.out.println("client: connected!");
+                 //System.out.println("client: connected!");
                  boolean firstTime = true;
                  // we could do this if we wanted to write to server in addition
                  // to reading
                  // out = new ObjectOutputStream(toServer.getOutputStream());
-                 while (true) {
+                 while (true) 
+                 {
                      // Get the xml string, decode to a Message object.
                      // Blocks in readObject(), waiting for server to send something.
                      String xmlString = (String) in.readObject();
                      XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(xmlString.getBytes()));
-                     Object[] objects = (Object[]) decoder.readObject();
-                     DShapeModel[] shape = (DShapeModel[]) objects[0];
-                     String command = (String) objects[1];
+                     //PackagerClass objects = (PackagerClass) decoder.readObject();
+                     //DShapeModel[] shape = objects.getShapes();
+                     //String command = objects.getCommand();
+                     DShapeModel[] shape = (DShapeModel[]) decoder.readObject();
+                     //String command = (String) decoder.readObject();
                      DShapeModel[] temp = new DShapeModel[1];
                      temp[0] = shape[shape.length-1];
                      System.out.println("client: read " + shape);
                      if(firstTime)
                      {
-                    	 invokeToGUI(shape, command);
+                    	 invokeToGUI(shape);//, command);
                     	 firstTime = false;
                      }
                      else
                      {
-                    	 invokeToGUI(temp, command);
+                    	 invokeToGUI(temp);//, command);
                      }
                      decoder.close();
                  }
@@ -183,7 +186,7 @@ public class ConnectionStuff {
 
     // Given a message, puts that message in the local GUI.
     // Can be called by any thread.
-    public void invokeToGUI(DShapeModel[] list, String command) {
+    public void invokeToGUI(DShapeModel[] list){//, String command) {
         
         Platform.runLater( new Runnable() {
             public void run() {
@@ -191,13 +194,14 @@ public class ConnectionStuff {
             	for(DShapeModel d : list)
             	{
             		System.out.println("Getting this object: " + d );
-            		if(command.equals(ADD))
-            		{
+            		//if(command.equals(ADD))
+            		//{
+            			System.out.println("Try to add shape");
             			canvas.addShape(d);
-            	
-            		}
-            		else if(command.equals(COLOR))
-            		{
+            			canvas.draw();
+            		//}
+            		//else if(command.equals(COLOR))
+            		//{
             			DShape temp = null;
             			for(DShape s : canvas.getList())
             			{
@@ -210,12 +214,13 @@ public class ConnectionStuff {
             			if(temp != null)
             			{
             				canvas.setColor(d.getColor(), temp);
+            				canvas.draw();
             			}
             			else
             			{
             				System.out.println("Coloring does not work in client");
             			}
-            		}
+            		//}
             	}
             	
             	
@@ -289,6 +294,7 @@ public class ConnectionStuff {
         public void run() {
             try {
                 ServerSocket serverSocket = new ServerSocket(port);
+                System.out.println("This works");
                 while (pageOn) {
                     Socket toClient = null;
                     // this blocks, waiting for a Socket to the client
@@ -318,13 +324,12 @@ public class ConnectionStuff {
     public synchronized void sendRemote(DShapeModel[] shape, String command)
     {
         System.out.println("server: send " + shape);
-        Object[] objects = new Object[2];
-        objects[0] = shape;
-        objects[1] = command;
+        //PackagerClass p = new PackagerClass(shape, command);
         // Convert the message object into an xml string.
         OutputStream memStream = new ByteArrayOutputStream();
         XMLEncoder encoder = new XMLEncoder(memStream);
-        encoder.writeObject(objects);
+        encoder.writeObject(shape);
+        //encoder.writeObject(command);
         encoder.close();
         String xmlString = memStream.toString();
         // Now write that xml string to all the clients.
@@ -349,7 +354,7 @@ public class ConnectionStuff {
     // (this and sendToOutputs() are synchronzied to avoid conflicts)
     public synchronized void addOutput(ObjectOutputStream out) 
 	{
-    	System.out.println("Added");
+    	//System.out.println("Added");
         outputs.add(out);
     }
     

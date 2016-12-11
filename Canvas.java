@@ -30,10 +30,10 @@ public class Canvas extends Pane implements Serializable
 
 	public void addShape(DShapeModel d) 
 	{
-		System.out.println(d);
+		//System.out.println(d);
 		if(d instanceof DRectModel)
 		{
-			System.out.println("this is a rectangle");
+			//System.out.println("this is a rectangle");
 			DRect rect = new DRect((DRectModel) d);
 			list.add(0, rect);
 			getChildren().add(rect.draw());
@@ -142,10 +142,12 @@ public class Canvas extends Pane implements Serializable
 	
 	public void updateServer(ConnectionStuff server, DShapeModel[] model, String command)
 	{
-		
-		server.sendRemote(model, command);
-		//server.sendRemote(this);
-		System.out.println("Added from Canvas");
+		if(server != null)
+		{
+			server.sendRemote(model, command);
+			//server.sendRemote(this);
+			System.out.println("Added from Canvas");
+		}
 	}
 	
 	
@@ -199,6 +201,8 @@ public class Canvas extends Pane implements Serializable
 			}
 			catch(Exception e)
 			{
+				getChildren().remove(o);
+				getChildren().add(o.draw());
 				System.out.println("There is a problem here");
 				//System.out.println(o.getModel().getColor());
 				//System.out.println(Color.GRAY);
@@ -206,6 +210,7 @@ public class Canvas extends Pane implements Serializable
 			
 			
 		}
+		
 		//getChildren().clear();
 		//getChildren().addAll(shapes);
 		
