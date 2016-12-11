@@ -27,7 +27,7 @@ public class Canvas extends Pane implements Serializable
 		table = t;
 		list = new ArrayList<>();
 	}
-
+	
 	public void addShape(DShapeModel d) 
 	{
 		//System.out.println(d);
@@ -72,19 +72,7 @@ public class Canvas extends Pane implements Serializable
 		Rectangle r = new Rectangle(super.getWidth(), super.getHeight());
 		super.setClip(r);
 	}
-	/*
-	public void dragMouse() 
-	{
-		super.setOnMouseDragged(new EventHandler()
-				{
-					public void handle(Event e)
-					{
-						
-					}
-				});
-	}
 	
-	*/
 	public int getIndexOfObject(DShape d)
 	{
 		int position = 0;
@@ -121,6 +109,10 @@ public class Canvas extends Pane implements Serializable
 		list.remove(d);
 		list.add(0, now);
 		draw();
+	}
+	
+	public void drawKnobs(Rectangle[] knobs){
+		this.getChildren().addAll(knobs);
 	}
 	
 	public ArrayList<DShape> getList()

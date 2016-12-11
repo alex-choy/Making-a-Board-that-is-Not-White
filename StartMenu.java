@@ -136,7 +136,6 @@ public class StartMenu extends Application{
 	}
 
 	public static void main(String[] args){
-		args1 = args;
 		launch(args);
 	}
 }

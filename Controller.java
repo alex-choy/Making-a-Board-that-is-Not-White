@@ -12,13 +12,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class Controller {
-	ArrayList<DShape> list;
+	//ArrayList<DShape> list;
 	Canvas canvas;
 	ConnectionStuff server;
 	TableView<TableInfo> table; // Saaj's Code
 	public Controller(Canvas canvas, TableView<TableInfo> t, ConnectionStuff server) //Saaj's Code
 	{
-		list = new ArrayList<>();
+		//list = new ArrayList<>();
 		this.canvas = canvas;
 		this.server = server;
 		table = t; //Saaj's Code
@@ -37,32 +37,33 @@ public class Controller {
 		//System.out.println(value);
 	}
 	public void addRectangle( DRect rect){	
-		list.add(0, rect);
+		//list.add(0, rect);
 		canvas.draw();
 	}
 	public void addEllipse(DOval oval)
 	{		
-		list.add(0, oval);
+		//list.add(0, oval);
 		canvas.draw();
 	}
 	public void addText(DText t) //Saaj's Code
 	{
 		DShapeModel model = t.getModel();
 		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(model.getType()), model.getX(), model.getY(), model.getWidth(), model.getHeight());
-		list.add(0, t);
+		//list.add(0, t);
 		canvas.draw();
 	}
+	/*
 	public ArrayList<DShape> getObjects()
 	{
 		return list;
-	}
+	}*/
 	
 	public void addLine(DLine line)
 	{
 		Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty("line"), line.getModel().getX(), line.getModel().getY(), line.getModel().getWidth(), line.getModel().getHeight());
 		table.getItems().add(info);
 		table.refresh();
-		list.add(0, line);
+		//list.add(0, line);
 		canvas.draw();
 	}
 
@@ -90,18 +91,18 @@ public class Controller {
 	
 	public void changeText(DText text, Font font, TextField textBox)
 	{
-		list.remove(text);
+		//list.remove(text);
 		text.setText(textBox.getText());
 		text.setFont(font);
-		list.add(0, text);
+		//list.add(0, text);
 		canvas.draw();
 	}
 	
 	
 	public void refresh( DShape shaped)
 	{		
-		list.remove(shaped);
-		list.add(0, shaped);
+		//list.remove(shaped);
+		//list.add(0, shaped);
 		System.out.println("refreshed");
 		Whiteboard.TableInfo info = null;
 		canvas.draw();

@@ -126,7 +126,7 @@ public class CilentWhiteboard {
 				double middleX =  event.getX();
 				double middleY = event.getY();
 				boolean obj = false;
-				for (DShape d: controller.getObjects())
+				for (DShape d: canvas.getList())
 				{
 					DShapeModel shape = d.getModel();
 					if(middleX >= shape.getX() && middleX <= shape.getX() + shape.getWidth())
