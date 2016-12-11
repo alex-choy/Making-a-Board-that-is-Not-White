@@ -5,6 +5,7 @@ import javafx.scene.shape.Shape;
 
 public class DLine extends DShape {
 
+	public Line drawn;
 	public DLine(DLineModel line)
 	{
 		super(line, "line");
@@ -14,7 +15,7 @@ public class DLine extends DShape {
 	public Shape draw()
 	{
 		DShapeModel model = super.getModel();
-		Line drawn = new Line(model.getX(),model.getY(), model.getWidth(), model.getHeight());
+		drawn = new Line(model.getX(),model.getY(), model.getWidth(), model.getHeight());
 		drawn.setFill(model.getColor());
 		return drawn;
 	}

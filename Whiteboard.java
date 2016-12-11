@@ -52,6 +52,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -68,6 +69,7 @@ public class Whiteboard extends Application
 	double orgSceneX, orgSceneY;
 	double orgTranslateX, orgTranslateY;
 	BorderPane pane;
+	boolean dragLine;
 	boolean drag;
 	boolean resize;	
 	boolean clicked;
@@ -538,6 +540,7 @@ public class Whiteboard extends Application
 		canvas.setOnMousePressed(new EventHandler<MouseEvent>()
 		{
 
+
 			public void handle(MouseEvent event)
 			{
 				
@@ -548,7 +551,7 @@ public class Whiteboard extends Application
 						for(int i = 0; i < knobs.length; i++)
 						{
 						Rectangle knob = knobs[i];
-							if(event.getX()>knob.getX() && event.getX()< knob.getX() + knob.getWidth() && event.getY()>knob.getY() && event.getY()< knob.getY() + knob.getHeight() )
+							if(event.getX()>knob.getX() && event.getX()< knob.getX() + knob.getWidth() && event.getY()>knob.getY() && event.getY()< knob.getY() + knob.getHeight())
 							{
 								System.out.println("knob detected");
 								resize = true;
@@ -589,26 +592,70 @@ public class Whiteboard extends Application
 				for (DShape d: canvas.getList())
 				{
 					DShapeModel shape = d.getModel();
-					if(middleX >= shape.getX() && middleX <= shape.getX() + shape.getWidth())
-					{
-						if (middleY >= shape.getY() && middleY <= shape.getY() + shape.getHeight())
+					if(shape instanceof DLineModel)
+					{	
+						int lowerX = Math.min(shape.getX(), shape.getWidth());
+						int lowerY = Math.min(shape.getY(), shape.getHeight());
+						int lineWidth = Math.abs(((shape.getX() - shape.getWidth()))); 
+						int lineHeight = Math.abs(((shape.getY() - shape.getHeight())));
+
+						if(middleX >= lowerX && middleX <= lowerX + lineWidth)
 						{
-							if(d != focusedObject)
+							if (middleY >= lowerY && middleY <= lowerY + lineHeight)
 							{
-								focusedObject = d;
-								obj = true;
-								
-								//System.out.println(focusedObject.toString());
-								break;
+								if(d != focusedObject)
+								{
+									focusedObject = d;
+									obj = true;
+									
+									//System.out.println(focusedObject.toString());
+									break;
+								}
+								else
+								{
+									obj = false;
+									break;
+								}	
 							}
-							else
+						}
+					}
+					else
+					{
+						if(middleX >= shape.getX() && middleX <= shape.getX() + shape.getWidth())
+						{
+							if (middleY >= shape.getY() && middleY <= shape.getY() + shape.getHeight())
 							{
-								obj = false;
-								break;
-							}	
+								if(d != focusedObject)
+								{
+									focusedObject = d;
+									obj = true;
+									
+									//System.out.println(focusedObject.toString());
+									break;
+								}
+								else
+								{
+									obj = false;
+									break;
+								}	
+							}
 						}
 					}
 				}
+				if(focusedObject instanceof DLine)
+				{
+					DLine line = (DLine)focusedObject;
+					Line drawn = line.drawn;
+					
+					drawn.setOnMousePressed(new EventHandler<MouseEvent>()
+						{
+						public void handle(MouseEvent event)
+							{
+								System.out.println("clicked");
+							}
+						});	
+				}
+				
 				if (!obj)
 				{
 					if (knobs != null)
@@ -630,7 +677,6 @@ public class Whiteboard extends Application
 				{
 					makeFocused(focusedObject);
 					setUpButtons(removeShape, moveToBack, moveToFront);
-	
 				}
 				
 			}
@@ -639,95 +685,163 @@ public class Whiteboard extends Application
 		
 		canvas.setOnMouseDragged(new EventHandler<MouseEvent>()
 		{
-
 			public void handle(MouseEvent event)
 			{
 				canvas.draw();
-	
 				if(resize)
 				{
-					for(int i = 0; i < knobs.length; i++)
+					if(focusedObject instanceof DLine)
 					{
-						Rectangle knob = knobs[i];
-						if(selectedKnob == null && event.getX()>knob.getX() && event.getX()< knob.getX() + knob.getWidth() && event.getY()>knob.getY() && event.getY()< knob.getY() + knob.getHeight())
+						for(int i = 0; i < 2; i++)
 						{
-							selectedKnob = knob;
-							System.out.println("success");
-						}		
+							Rectangle knob = knobs[i];
+							if(selectedKnob == null && event.getX()>knob.getX() && event.getX()< knob.getX() + knob.getWidth() && event.getY()>knob.getY() && event.getY()< knob.getY() + knob.getHeight())
+							{
+								selectedKnob = knob;
+							}
+						}
+						if(selectedKnob == knobs[0])
+						{
+							selectedKnob.setX(event.getX() - (knobs[0].getWidth()/2));
+							selectedKnob.setY(event.getY() - (knobs[0].getHeight()/2));
+							focusedObject.getModel().setX((int)selectedKnob.getX());
+							focusedObject.getModel().setY((int)selectedKnob.getY());
+						}
+						if(selectedKnob == knobs[1])
+						{
+							selectedKnob.setX(event.getX() - (knobs[0].getWidth()/2));
+							selectedKnob.setY(event.getY() - (knobs[0].getHeight()/2));
+							focusedObject.getModel().setWidth((int)selectedKnob.getX());
+							focusedObject.getModel().setHeight((int)selectedKnob.getY());	
+						}
+						
+						/*
+							if(knobs[0].getX()> knobs[1].getX())
+							{
+								int x = (int)knobs[0].getX();
+							focusedObject.getModel().setX((int)(knobs[1].getX()));
+							focusedObject.getModel().setWidth(x);
+							}
+							else
+							{
+							focusedObject.getModel().setX((int)(knobs[0].getX()));
+							}
+						
+							if(knobs[0].getY()> knobs[1].getY())
+							{
+							int y = (int)knobs[0].getY();
+							focusedObject.getModel().setY((int)(knobs[1].getY()));
+							focusedObject.getModel().setHeight(y);
+							}
+							else
+							{
+							focusedObject.getModel().setY((int)(knobs[0].getY()));
+							}
+							*/	
+						System.out.println(knobs);						
+					}
+					else
+					{
+						System.out.println("fail");
+						for(int i = 0; i < knobs.length; i++)
+						{
+							Rectangle knob = knobs[i];
+							if(selectedKnob == null && event.getX()>knob.getX() && event.getX()< knob.getX() + knob.getWidth() && event.getY()>knob.getY() && event.getY()< knob.getY() + knob.getHeight())
+							{
+								selectedKnob = knob;
+								System.out.println("success");
+							}		
+						}
 
-					}		
-					if(selectedKnob == knobs[0])
-					{
-						selectedKnob.setX(event.getX() - (knobs[0].getWidth()/2));
-						knobs[1].setX(event.getX() - (knobs[0].getWidth()/2));
-						selectedKnob.setY(event.getY() - (knobs[0].getHeight()/2));
-						knobs[2].setY(event.getY() - (knobs[0].getHeight()/2));
-						focusedObject.getModel().setWidth((int)Math.abs(selectedKnob.getX() - knobs[2].getX()));
-						focusedObject.getModel().setHeight((int)Math.abs(selectedKnob.getY() - knobs[1].getY()));
-						System.out.println(0);
-					}
-					else if(selectedKnob == knobs[1])
-					{
-						selectedKnob.setX(event.getX() - (knobs[1].getWidth()/2));
-						knobs[0].setX(event.getX() - (knobs[1].getWidth()/2));
-						selectedKnob.setY(event.getY() - (knobs[1].getHeight()/2));
-						knobs[3].setY(event.getY() - (knobs[1].getHeight()/2));
-						focusedObject.getModel().setWidth((int)Math.abs(selectedKnob.getX() - knobs[3].getX()));
-						focusedObject.getModel().setHeight((int)Math.abs(selectedKnob.getY() - knobs[0].getY()));
-						System.out.println(1);
-					}
-					else if(selectedKnob == knobs[2])
-					{
-						selectedKnob.setX(event.getX() - (knobs[2].getWidth()/2));
-						knobs[3].setX(event.getX() - (knobs[2].getWidth()/2));
-						selectedKnob.setY(event.getY() - (knobs[2].getHeight()/2));
-						knobs[0].setY(event.getY() - (knobs[2].getHeight()/2));
-						focusedObject.getModel().setX(focusedObject.getModel().getX());
-						focusedObject.getModel().setWidth((int)Math.abs(selectedKnob.getX() - knobs[0].getX()));
-						focusedObject.getModel().setHeight((int)Math.abs(selectedKnob.getY() - knobs[3].getY()));
-						System.out.println(2);
-					}
-					else if(selectedKnob == knobs[3])
-					{
-						selectedKnob.setX(event.getX() - (knobs[3].getWidth()/2));
-						knobs[2].setX(event.getX() - (knobs[3].getWidth()/2));
-						selectedKnob.setY(event.getY() - (knobs[3].getHeight()/2));
-						knobs[1].setY(event.getY() - (knobs[3].getHeight()/2));
-						focusedObject.getModel().setWidth((int)Math.abs(selectedKnob.getX() - knobs[1].getX()));
-						focusedObject.getModel().setHeight((int)Math.abs(selectedKnob.getY() - knobs[2].getY()));
-						System.out.println("o pisition : "+ knobs[0].getX() + "     3 position : " + knobs[3].getX());
-					}
-					
-					// code to move shape into the right area
-					if(knobs[0].getX()> knobs[2].getX())
-					{
-						focusedObject.getModel().setX((int)(knobs[2].getX()));
-					}
-					else
-					{
-						focusedObject.getModel().setX((int)(knobs[0].getX()));
-					}
-					
-					if(knobs[0].getY()> knobs[1].getY())
-					{
-						focusedObject.getModel().setY((int)(knobs[1].getY()));
-					}
-					else
-					{
-						focusedObject.getModel().setY((int)(knobs[0].getY()));
+						if(selectedKnob == knobs[0])
+						{
+							selectedKnob.setX(event.getX() - (knobs[0].getWidth()/2));
+							knobs[1].setX(event.getX() - (knobs[0].getWidth()/2));
+							selectedKnob.setY(event.getY() - (knobs[0].getHeight()/2));
+							knobs[2].setY(event.getY() - (knobs[0].getHeight()/2));
+							focusedObject.getModel().setWidth((int)Math.abs(selectedKnob.getX() - knobs[2].getX()));
+							focusedObject.getModel().setHeight((int)Math.abs(selectedKnob.getY() - knobs[1].getY()));
+							System.out.println(0);
+						}
+						else if(selectedKnob == knobs[1])
+						{
+							selectedKnob.setX(event.getX() - (knobs[1].getWidth()/2));
+							knobs[0].setX(event.getX() - (knobs[1].getWidth()/2));
+							selectedKnob.setY(event.getY() - (knobs[1].getHeight()/2));
+							knobs[3].setY(event.getY() - (knobs[1].getHeight()/2));
+							focusedObject.getModel().setWidth((int)Math.abs(selectedKnob.getX() - knobs[3].getX()));
+							focusedObject.getModel().setHeight((int)Math.abs(selectedKnob.getY() - knobs[0].getY()));
+							System.out.println(1);
+						}
+						else if(selectedKnob == knobs[2])
+						{
+							selectedKnob.setX(event.getX() - (knobs[2].getWidth()/2));
+							knobs[3].setX(event.getX() - (knobs[2].getWidth()/2));
+							selectedKnob.setY(event.getY() - (knobs[2].getHeight()/2));
+							knobs[0].setY(event.getY() - (knobs[2].getHeight()/2));
+							focusedObject.getModel().setX(focusedObject.getModel().getX());
+							focusedObject.getModel().setWidth((int)Math.abs(selectedKnob.getX() - knobs[0].getX()));
+							focusedObject.getModel().setHeight((int)Math.abs(selectedKnob.getY() - knobs[3].getY()));
+							System.out.println(2);
+						}
+						else if(selectedKnob == knobs[3])
+						{
+							selectedKnob.setX(event.getX() - (knobs[3].getWidth()/2));
+							knobs[2].setX(event.getX() - (knobs[3].getWidth()/2));
+							selectedKnob.setY(event.getY() - (knobs[3].getHeight()/2));
+							knobs[1].setY(event.getY() - (knobs[3].getHeight()/2));
+							focusedObject.getModel().setWidth((int)Math.abs(selectedKnob.getX() - knobs[1].getX()));
+							focusedObject.getModel().setHeight((int)Math.abs(selectedKnob.getY() - knobs[2].getY()));
+							System.out.println("o pisition : "+ knobs[0].getX() + "     3 position : " + knobs[3].getX());
+						}
+						
+						// code to move shape into the right area
+						if(knobs[0].getX()> knobs[2].getX())
+						{
+							focusedObject.getModel().setX((int)(knobs[2].getX()));
+						}
+						else
+						{
+							focusedObject.getModel().setX((int)(knobs[0].getX()));
+						}
+						
+						if(knobs[0].getY()> knobs[1].getY())
+						{
+							focusedObject.getModel().setY((int)(knobs[1].getY()));
+						}
+						else
+						{
+							focusedObject.getModel().setY((int)(knobs[0].getY()));
+						}	
 					}
 					canvas.drawKnobs(knobs);
 				}
 				else if(drag)
 				{
+					if(focusedObject instanceof DLine)
+					{
+						
+						int lineWidth = (focusedObject.getModel().getX() - focusedObject.getModel().getWidth());
+						int lineHeight = (focusedObject.getModel().getY() - focusedObject.getModel().getHeight());
+						focusedObject.getModel().setX((int)(event.getX() + (lineWidth/2)));
+						focusedObject.getModel().setY((int)(event.getY() + (lineHeight/2)));						
+						
+						focusedObject.getModel().setWidth((int)(event.getX() - (lineWidth/2)));
+						focusedObject.getModel().setHeight((int)(event.getY() - (lineHeight/2)));
+					}
+					else
+					{
+						focusedObject.getModel().setX((int)(event.getX() - (focusedObject.getModel().getWidth()/2)));
+						focusedObject.getModel().setY((int)(event.getY() - (focusedObject.getModel().getHeight()/2)));						
+						System.out.println("fail");
+					}
 					System.out.println("dragging");
-					focusedObject.getModel().setX((int)(event.getX() - (focusedObject.getModel().getWidth()/2)));
-					focusedObject.getModel().setY((int)(event.getY() - (focusedObject.getModel().getHeight()/2)));
+
 				}
 								
 			}
 		});
-		
+
 		// FINISHING OFF THE OBJECTS
 		buttonBox.getChildren().addAll(add, addRect, addOval, addLine, addText);
 		colorBox.getChildren().addAll(colorPicker, doneColorPicker);

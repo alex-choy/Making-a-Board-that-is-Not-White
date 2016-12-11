@@ -92,17 +92,10 @@ public class DShapeModel implements Serializable
 	
 	public Rectangle[] drawKnobs()
 	{
-		 
-		
 		Rectangle knob1 = new Rectangle(x, y, 9, 9);
-	
-
 		Rectangle knob2 = new Rectangle(x, y + height - 9, 9, 9);
-	
 		Rectangle knob3 = new Rectangle(x + width - 9, y, 9, 9);
-		
 		Rectangle knob4 = new Rectangle(x + width - 9, y + height - 9, 9, 9);
-		
 		Rectangle[] knobs = new Rectangle[4];
 		knobs[0] = knob1;
 		knobs[1] = knob2;

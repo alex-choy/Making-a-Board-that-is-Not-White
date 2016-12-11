@@ -18,33 +18,12 @@ public class DLineModel extends DShapeModel {
 	}
 	
 	public Rectangle[] drawKnobs(){
+
+		Rectangle knob1 = new Rectangle(this.getX(), this.getY(), 9, 9);
+		Rectangle knob2 = new Rectangle(this.getWidth(), this.getHeight(), 9, 9);
 		Rectangle[] knobs = new Rectangle[2];
-		
-		Rectangle topRight = null;
-		Rectangle botLeft = null;
-		
-		if(getX() - 5 < 0 || getY() - 5 < 0)
-		{
-			topRight = new Rectangle(getX()-4, getY()-4, 9, 9);
-		}
-		else
-		{
-			topRight = new Rectangle(getX()-5, getY()-5, 9, 9);
-		}
-		if (getX() + getWidth() + 5 > c.getWidth() || getY() + getHeight() + 5 > c.getHeight())
-		{
-			botLeft = new Rectangle( getWidth() - 4,  getHeight() - 4, 9, 9);
-		}
-		else
-		{
-			botLeft = new Rectangle(getX() + getWidth() - 5, getY() + getHeight() - 5, 9, 9);
-		}
-		
-		
-		
-		knobs[0] = topRight;
-		knobs[1] = botLeft;
-		
+		knobs[0] = knob1;
+		knobs[1] = knob2;
 		return knobs;
 	}
 
