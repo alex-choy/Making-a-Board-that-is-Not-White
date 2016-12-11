@@ -1,22 +1,13 @@
 package WhiteBoard;
 
 //TickerExample.java
-/*
- Demonstrates using client and server sockets with a GUI.
- One server ticker can support any number of client tickers --
- sortof a primitive, one-way instant messenger.
- Uses xml encoding to send a little data struct Message object.
- */
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import javax.swing.*;
 
-import WhiteBoard.Whiteboard.TableInfo;
 import javafx.application.Platform;
-import javafx.scene.control.TableView;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 import java.util.*;
 import java.io.*;
@@ -38,6 +29,7 @@ public class ConnectionStuff {
    final String REMOVE = "remove";
    final String TRANSLATE = "move";
    final String COLOR = "color";
+   final String CHANGE_TEXT = "change text";
     public ConnectionStuff(String type, String port, Canvas can) 
     {
     	canvas = can;
@@ -155,22 +147,36 @@ public class ConnectionStuff {
                      // Blocks in readObject(), waiting for server to send something.
                      String xmlString = (String) in.readObject();
                      XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(xmlString.getBytes()));
-                     //PackagerClass objects = (PackagerClass) decoder.readObject();
-                     //DShapeModel[] shape = objects.getShapes();
-                     //String command = objects.getCommand();
-                     DShapeModel[] shape = (DShapeModel[]) decoder.readObject();
+                     PackagerClass objects = (PackagerClass) decoder.readObject();
+                     //System.out.println("recieved package: " + objects.getShapes() + " and " + objects.getCommand()); 
+                 
+                     
+                     DShapeModel[] shape = objects.getShapes();
+                     String command = objects.getCommand();
+                     String color = objects.getColor();
+                     System.out.println(color);
+                     
+                     color = color.substring(2,8);
+                 
+                     System.out.print("sendRemote color: " + color);
+                     Color c = Color.web("#"+color);
+                     
+                     //DShapeModel[] shape = (DShapeModel[]) decoder.readObject();
                      //String command = (String) decoder.readObject();
                      DShapeModel[] temp = new DShapeModel[1];
+                     
                      temp[0] = shape[shape.length-1];
-                     System.out.println("client: read " + shape);
+                     // System.out.println("Color being retrieved from client: " + temp[0].getColor());
+                 //System.out.println("client: read " + shape);
                      if(firstTime)
                      {
-                    	 invokeToGUI(shape);//, command);
+                    	 //invokeToGUI(shape);
+                    	 invokeToGUI(shape, ADD, objects.getIndex(), c);//, color);
                     	 firstTime = false;
                      }
                      else
                      {
-                    	 invokeToGUI(temp);//, command);
+                    	 invokeToGUI(temp, command, objects.getIndex(),c);//, color);//, command);
                      }
                      decoder.close();
                  }
@@ -186,33 +192,40 @@ public class ConnectionStuff {
 
     // Given a message, puts that message in the local GUI.
     // Can be called by any thread.
-    public void invokeToGUI(DShapeModel[] list){//, String command) {
+    public void invokeToGUI(DShapeModel[] list, String command, int index, Color color)//, Color color)
+    {
         
         Platform.runLater( new Runnable() {
-            public void run() {
+            public void run()
+            {
             	
             	for(DShapeModel d : list)
             	{
-            		System.out.println("Getting this object: " + d );
-            		//if(command.equals(ADD))
-            		//{
-            			System.out.println("Try to add shape");
+//            		//System.out.println("Getting this object: " + d );
+            		if(command.equals(ADD))
+            		{
+//            			//System.out.println("Try to add shape");
             			canvas.addShape(d);
             			canvas.draw();
-            		//}
-            		//else if(command.equals(COLOR))
-            		//{
+            		}
+            		/*
+            		else if(command.equals(COLOR))
+            		{
             			DShape temp = null;
-            			for(DShape s : canvas.getList())
+            			for(DShape s: canvas.getList())
             			{
-            				if(s.getModel().equals(d))
+            				if(s.getModel().equals(canvas.getListAsArray()[index]))
             				{
             					temp = s;
-            					break;
             				}
             			}
             			if(temp != null)
             			{
+//            				System.out.println("This should be working");
+//            				System.out.println(d.getColor());
+//            				System.out.println();
+            			    //System.out.println(d.getColor());
+            				temp.getModel().setColor(d.getColor());
             				canvas.setColor(d.getColor(), temp);
             				canvas.draw();
             			}
@@ -220,50 +233,102 @@ public class ConnectionStuff {
             			{
             				System.out.println("Coloring does not work in client");
             			}
-            		//}
-            	}
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	
-            	//adding objects
-            		/*if(d.getType().equals("rectangle"))
-					{
-	            		controller.getObjects().add(0, new DRect((DRectModel) d));
-					}
-					else if(d.getType().equals("oval"))
-					{
-						controller.getObjects().add(0, new DOval((DOvalModel) d));
-					}
-					else if(d.getType().equals("line"))
-					{
-						controller.getObjects().add(0, new DLine((DLineModel)d));
-					}
-					else if(d.getType().equals("text"))
-					{
-						controller.getObjects().add(0,new DText((DTextModel) d));
-					}
+            		}
             		*/
-            	
-            	canvas.draw();//null);
-                //sendLocal(temp);
+            		else if (command.equals(MOVE_TO_FRONT)){
+            			DShape shape;
+            			if (d instanceof DRectModel){
+            				shape = new DRect((DRectModel) d);
+            			}
+            			else if (d instanceof DOvalModel){
+            				shape = new DOval((DOvalModel) d);
+            			}
+            			else if (d instanceof DLineModel){
+            				shape = new DLine((DLineModel) d);
+            			}
+            			else {
+            				shape = new DText ((DTextModel) d);
+            			}
+            			canvas.move2Front(shape);
+            		}
+            		else if (command.equals((MOVE_TO_BACK))){
+            			DShape shape;
+            			if (d instanceof DRectModel){
+            				shape = new DRect((DRectModel) d);
+            			}
+            			else if (d instanceof DOvalModel){
+            				shape = new DOval((DOvalModel) d);
+            			}
+            			else if (d instanceof DLineModel){
+            				shape = new DLine((DLineModel) d);
+            			}
+            			else {
+            				shape = new DText ((DTextModel) d);
+            			}
+            			canvas.move2Back(shape);
+            		}
+            		else if(command.equals(REMOVE)){
+            			DShape shape = null;
+            			if (d instanceof DRectModel){
+            				shape = new DRect((DRectModel) d);
+            			}
+            			else if (d instanceof DOvalModel){
+            				shape = new DOval((DOvalModel) d);
+            			}
+            			else if (d instanceof DLineModel){
+            				shape = new DLine((DLineModel) d);
+            			}
+            			else if (d instanceof DTextModel){
+            				shape = new DText ((DTextModel) d);
+            			}
+            			canvas.removeObject(shape);
+            		}
+            		else if(command.equals(COLOR)){
+            			DShape shape = null;
+            			if (d instanceof DRectModel){
+            				shape = new DRect((DRectModel) d);
+            			}
+            			else if (d instanceof DOvalModel){
+            				shape = new DOval((DOvalModel) d);
+            			}
+            			else if (d instanceof DLineModel){
+            				shape = new DLine((DLineModel) d);
+            			}
+            			else if (d instanceof DTextModel){
+            				shape = new DText ((DTextModel) d);
+            			}
+            			System.out.println("Setting color to: " + color);
+            			shape.getModel().setColor(color);
+            			canvas.removeObject(shape);
+            			canvas.addShape(shape.getModel());
+            			canvas.draw();
+            		}
+            		else if (command.equals(CHANGE_TEXT)){
+            			DText text = null;
+            			if (d instanceof DTextModel){
+            				boolean found = false;
+            				text = new DText((DTextModel) d);
+            				for(int i = 0; !found && i < canvas.getList().size(); i++){
+            					Text listText = canvas.getThisText(text.getModel().getText().toString());
+            					if(text.equals(listText)){
+            						found = true;
+            						text.getModel().setText(listText.toString());
+            						canvas.removeObject(text);
+                    				canvas.addShape(text.getModel());
+                    				canvas.draw();
+            					}
+            				}
+            				
+            			}
+            		}
+            	}
+            	canvas.draw();
             }
         });
     }
     // Sends a message to all of the outgoing streams.
     // Writing rarely blocks, so doing this on the swing thread is ok,
     // although could fork off a worker to do it.
-    
-    
-    
-    
-    
     
     
     
@@ -304,13 +369,7 @@ public class ConnectionStuff {
                     // the list of outputs
                     // (our server only uses the output stream of the connection)
                     addOutput(new ObjectOutputStream(toClient.getOutputStream()));
-                    /*int index = 0;
-        			DShapeModel[] shapes = new DShapeModel[controller.getObjects().size()];
-        			for(int i = controller.getObjects().size() - 1; i >= 0; i--)
-        			{
-        				shapes[index] = controller.getObjects().get(i).getModel();
-        				index++;
-        			}*/
+                    
         			
                 }
                 serverSocket.close();
@@ -321,15 +380,18 @@ public class ConnectionStuff {
         }
     }
     
-    public synchronized void sendRemote(DShapeModel[] shape, String command)
+    public synchronized void sendRemote(DShapeModel[] shape, String command, int index, String color)
     {
         System.out.println("server: send " + shape);
-        //PackagerClass p = new PackagerClass(shape, command);
+        PackagerClass p = new PackagerClass();
+        p.setCommand(command);
+        p.setShapes(shape);    	
+        p.setIndex(index);
+        p.setColor(color);
         // Convert the message object into an xml string.
         OutputStream memStream = new ByteArrayOutputStream();
         XMLEncoder encoder = new XMLEncoder(memStream);
-        encoder.writeObject(shape);
-        //encoder.writeObject(command);
+        encoder.writeObject(p);
         encoder.close();
         String xmlString = memStream.toString();
         // Now write that xml string to all the clients.
@@ -337,7 +399,7 @@ public class ConnectionStuff {
         while (it.hasNext()) {
             ObjectOutputStream out = it.next();
             try {
-            	System.out.println("Adding model in server");
+            	System.out.println("Adding package into server: " + p.getShapes() + " and " + p.getCommand());
                 out.writeObject(xmlString);
                 out.flush();
             }

@@ -3,6 +3,7 @@ import java.io.Serializable;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 
 public class DShapeModel implements Serializable
 {
@@ -13,6 +14,9 @@ public class DShapeModel implements Serializable
 	private int height;
 	private Color color;
 	public String type;
+	private String text;
+	private Font font;
+	
 	public DShapeModel()
 	{
 		this.x = 20;		
@@ -90,12 +94,32 @@ public class DShapeModel implements Serializable
 		return type;
 	}
 	
+	public void setText(String t){
+		text = t;
+	}
+	
+	public String getText(){
+		return text;
+	}
+	public void setFont(Font f){
+		font = f;
+	}
+	public Font getFont(){
+		return font;
+	}
 	public Rectangle[] drawKnobs()
 	{
+		 
+		
 		Rectangle knob1 = new Rectangle(x, y, 9, 9);
+	
+
 		Rectangle knob2 = new Rectangle(x, y + height - 9, 9, 9);
+	
 		Rectangle knob3 = new Rectangle(x + width - 9, y, 9, 9);
+		
 		Rectangle knob4 = new Rectangle(x + width - 9, y + height - 9, 9, 9);
+		
 		Rectangle[] knobs = new Rectangle[4];
 		knobs[0] = knob1;
 		knobs[1] = knob2;

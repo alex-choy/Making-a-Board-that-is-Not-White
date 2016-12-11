@@ -1,36 +1,38 @@
 package WhiteBoard;
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import WhiteBoard.Whiteboard.TableInfo;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.control.TableView;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 
 public class Canvas extends Pane implements Serializable
 {
 	ArrayList<DShape> list;
 	TableView<TableInfo> table;
+	
+	
 	public Canvas(TableView<TableInfo> t) 
 	{
 		super.setPrefSize(500, 500);
-		super.setStyle("-fx-border-color: black");
+		super.setStyle("-fx-border-color: black; -fx-background-color: white");
 		table = t;
 		list = new ArrayList<>();
 	}
-	
+
 	public void addShape(DShapeModel d) 
 	{
 		//System.out.println(d);
+
+		
+		
 		if(d instanceof DRectModel)
 		{
 			//System.out.println("this is a rectangle");
@@ -40,6 +42,8 @@ public class Canvas extends Pane implements Serializable
 			Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(d.getType()), d.getX(),d.getY(), d.getWidth(), d.getHeight());
 			table.getItems().add(info);
 			table.refresh();	
+			
+			System.out.println(getIndexOfObject(rect));
 		}
 		else if(d instanceof DOvalModel)
 		{
@@ -49,6 +53,9 @@ public class Canvas extends Pane implements Serializable
 			Whiteboard.TableInfo info = new TableInfo(new SimpleStringProperty(d.getType()), d.getX(),d.getY(), d.getWidth(), d.getHeight());
 			table.getItems().add(info);
 			table.refresh();	
+			
+			System.out.println(getIndexOfObject(oval));
+
 		}
 		else if(d instanceof DLineModel)
 		{
@@ -72,22 +79,64 @@ public class Canvas extends Pane implements Serializable
 		Rectangle r = new Rectangle(super.getWidth(), super.getHeight());
 		super.setClip(r);
 	}
+	/*
+	public void dragMouse() 
+	{
+		super.setOnMouseDragged(new EventHandler()
+				{
+					public void handle(Event e)
+					{
+						
+					}
+				});
+	}
+	
+	*/
+	public void changeText(DText text, Font font, TextField textBox)
+	{
+		//list.remove(text);
+		text.getModel().setText(textBox.getText());
+		text.getModel().setFont(font);
+		//list.add(0, text);
+		draw();
+	}
 	
 	public int getIndexOfObject(DShape d)
 	{
+		boolean found = false;
 		int position = 0;
- 	   for(DShape shape: list)
- 	   {
- 		   if(!d.equals(d))
- 		   {
- 			   position++;
- 		   }
- 		   else
- 		   {
- 			   break;
- 		   }
- 	   }
- 	   if(position == list.size())
+ 	 
+		int dX = d.getModel().getX();
+		int dY = d.getModel().getY();
+		int dWidth = d.getModel().getWidth();
+		int dHeight = d.getModel().getWidth();
+		
+		for(int i = 0; !found && i < list.size(); i++){
+			DShape current = list.get(i);
+			int x = current.getModel().getX();
+			int y = current.getModel().getY();
+			int width = current.getModel().getWidth();
+			int height = current.getModel().getWidth();
+			
+			if( d instanceof DRect && current instanceof DRect && dX == x && dY == y && dWidth == width && dHeight == height){
+				position = i;
+				found = true;
+			}
+			else if( d instanceof DOval && current instanceof DOval && dX == x && dY == y && dWidth == width && dHeight == height){
+				position = i;
+				found = true;
+			}
+			else if( d instanceof DLine && current instanceof DLine && dX == x && dY == y && dWidth == width && dHeight == height){
+				position = i;
+				found = true;
+			}
+			else if( d instanceof DText && current instanceof DText && dX == x && dY == y && dWidth == width && dHeight == height){
+				position = i;
+				found = true;
+			}
+		}
+ 	   
+ 	   if(found == false)
  	   {
  		   return -1;
  	   }
@@ -97,7 +146,7 @@ public class Canvas extends Pane implements Serializable
 	public void move2Back(DShape d)
 	{
 		DShape now = d;
-		list.remove(d);
+		removeObject(d);
 		list.add(now);
 		draw();
 		//updateTable();
@@ -106,9 +155,21 @@ public class Canvas extends Pane implements Serializable
 	public void move2Front(DShape d)
 	{
 		DShape now = d;
-		list.remove(d);
+		removeObject(d);
 		list.add(0, now);
 		draw();
+	}
+	
+	public Text getThisText(String theText){
+		Text t = null;
+		
+		for(int i = 0; i < list.size(); i++){
+			DShape shape = list.get(i);
+			if(shape instanceof DText){
+			}
+		}
+		
+		return t;
 	}
 	
 	public void drawKnobs(Rectangle[] knobs){
@@ -132,11 +193,11 @@ public class Canvas extends Pane implements Serializable
 		return shapes;
 	}
 	
-	public void updateServer(ConnectionStuff server, DShapeModel[] model, String command)
+	public void updateServer(ConnectionStuff server, DShapeModel[] model, String command, int indexu)
 	{
 		if(server != null)
 		{
-			server.sendRemote(model, command);
+			server.sendRemote(model, command, 0,list.get(0).getModel().getColor().toString()); //last param = color (string)
 			//server.sendRemote(this);
 			System.out.println("Added from Canvas");
 		}
@@ -145,20 +206,58 @@ public class Canvas extends Pane implements Serializable
 	
 	public void removeObject(DShape d)
 	{
-		
+		boolean found = false;
 		//System.out.println("In the controller class:" + d +"\nlist size:" + list.size());
-		list.remove(d);
+		//list.remove(d);
+		int dX = d.getModel().getX();
+		int dY = d.getModel().getY();
+		int dWidth = d.getModel().getWidth();
+		int dHeight = d.getModel().getWidth();
+		
+		for(int i = 0; !found && i < list.size(); i++){
+			DShape current = list.get(i);
+			int x = current.getModel().getX();
+			int y = current.getModel().getY();
+			int width = current.getModel().getWidth();
+			int height = current.getModel().getWidth();
+			
+			if( d instanceof DRect && current instanceof DRect && dX == x && dY == y && dWidth == width && dHeight == height){
+				list.remove(current);
+				found = true;
+				System.out.print("Rectangle deleted");
+			}
+			else if( d instanceof DOval && current instanceof DOval && dX == x && dY == y && dWidth == width && dHeight == height){
+				list.remove(current);
+				found = true;
+				System.out.print("Oval deleted");
+			}
+			else if( d instanceof DLine && current instanceof DLine && dX == x && dY == y && dWidth == width && dHeight == height){
+				list.remove(current);
+				found = true;
+				System.out.print("Line deleted");
+			}
+			else if( d instanceof DText && current instanceof DText && dX == x && dY == y && dWidth == width && dHeight == height){
+				list.remove(current);
+				found = true;
+				System.out.print("Text deleted");
+			}
+		}
+		
+		
 		draw();
 		//canvas.getChildren().remove(d);
 	}
 	
 	public void setColor(Color value, DShape shape)
 	{
+		System.out.println("Inside setColor: " + value.toString());
 		DShapeModel model = shape.getModel();
 		model.setColor(value);
-		int position = getIndexOfObject(shape);
-		list.set(position, shape);
+		removeObject(shape);
+		list.add(0, shape);
 		draw();
+		//int position = getIndexOfObject(shape);
+		//list.set(position, shape);
 		//canvas.getChildren().remove(shape);
 		//canvas.getChildren().add(shape.draw());
 		

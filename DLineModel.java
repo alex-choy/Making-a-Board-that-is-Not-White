@@ -18,7 +18,6 @@ public class DLineModel extends DShapeModel {
 	}
 	
 	public Rectangle[] drawKnobs(){
-
 		Rectangle knob1 = new Rectangle(this.getX(), this.getY(), 9, 9);
 		Rectangle knob2 = new Rectangle(this.getWidth(), this.getHeight(), 9, 9);
 		Rectangle[] knobs = new Rectangle[2];

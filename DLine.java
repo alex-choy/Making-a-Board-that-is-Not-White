@@ -4,8 +4,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 
 public class DLine extends DShape {
-
-	public Line drawn;
+	Line drawn;
 	public DLine(DLineModel line)
 	{
 		super(line, "line");

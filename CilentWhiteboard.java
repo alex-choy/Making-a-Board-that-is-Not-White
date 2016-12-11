@@ -1,12 +1,10 @@
 package WhiteBoard;
 
-import java.util.ArrayList;
-
-import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import WhiteBoard.Whiteboard.TableInfo;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -23,6 +21,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class CilentWhiteboard {
@@ -79,7 +78,6 @@ public class CilentWhiteboard {
 		
 	
 		
-		Controller controller = new Controller(canvas, table, null); //Saaj's code
 		//Controller controller = new Controller(canvas, table); //Saaj's code
 		table.setPrefWidth(stage.getWidth());
 		table.setPrefHeight(365);  //saaj's code
@@ -110,7 +108,7 @@ public class CilentWhiteboard {
 		
 		//Server stuff
 		//#########################################################################
-		ConnectionStuff client = new ConnectionStuff("client", port, canvas);
+		//ConnectionStuff client = new ConnectionStuff("client", port, canvas);
 		//client.start();
 		//client.setController(controller);
 		//#######################################################################
@@ -165,11 +163,28 @@ public class CilentWhiteboard {
 			}
 			
 		});
+		
+		VBox container = new VBox();
+		container.setStyle("-fx-background-color: orange");
+		
 		vbox.getChildren().add(table);
 		pane.setLeft(vbox);
 		pane.setCenter(canvas);
 		
-		((Group) scene.getRoot()).getChildren().add(pane);
+		Text welcome = new Text("You are in the Client View");
+		Font f = new Font("Times New Roman", 40);
+		welcome.setFont(f);
+		
+		HBox hbox = new HBox();
+		hbox.getChildren().add(welcome);
+		pane.setTop(hbox);
+		welcome.setFill(Color.BLACK);
+		
+
+		container.getChildren().add(pane);
+		
+		
+		((Group) scene.getRoot()).getChildren().add(container);
 		
 		stage.setScene(scene);
 		stage.show();

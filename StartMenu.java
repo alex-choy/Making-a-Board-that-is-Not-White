@@ -21,7 +21,6 @@ import javafx.stage.Stage;
 public class StartMenu extends Application{
 	
 
-	static String[] args1;
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void start(Stage stage)  {

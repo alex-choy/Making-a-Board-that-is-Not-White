@@ -12,10 +12,10 @@ import java.util.ArrayList;
 public class ServerClass extends Thread {
 	public ArrayList<ObjectOutputStream> outputs;
 	public int port;
-	Controller controller;
-	public ServerClass(int port, Controller c) {
+	Canvas canvas;
+	public ServerClass(int port, Canvas c) {
 		this.port = port;
-		controller = c;
+		canvas = c;
 	}
 	public void run()
 	{
@@ -29,7 +29,7 @@ public class ServerClass extends Thread {
 				
 				outputs.add(new ObjectOutputStream(socket.getOutputStream()));
 				XMLEncoder xml = new XMLEncoder( socket.getOutputStream());
-				for(DShape d : controller.getObjects())
+				for(DShape d : canvas.getList())
 				{
 					stream.writeObject(d.draw());
 				}
