@@ -615,10 +615,16 @@ public class Whiteboard extends Application
 					{
 						canvas.getChildren().removeAll(knobs);
 						makeUnfocused();
+						removeTextInfo(textBox, dropDown, changeText);
 						hideButtons(removeShape, moveToBack, moveToFront);
 						knobs = null;
 					}
 					focusedObject = null;
+				}
+				
+				if(focusedObject instanceof DText){
+					makeFocused(focusedObject);
+					setUpTextInfo(textBox, dropDown, changeText);
 				}
 				if (focusedObject != null)
 				{
