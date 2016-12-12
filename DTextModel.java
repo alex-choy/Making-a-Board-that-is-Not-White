@@ -6,9 +6,8 @@ public class DTextModel extends DShapeModel {
 		super();
 		setType("text");
 	}
-	
-	public DTextModel getModel()
-	{
+
+	public DTextModel getModel() {
 		return this;
 	}
 

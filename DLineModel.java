@@ -1,23 +1,22 @@
 package WhiteBoard;
+
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class DLineModel extends DShapeModel {
 	Canvas c;
-	public DLineModel(Canvas canvas) 
-	{
+
+	public DLineModel(Canvas canvas) {
 		super();
 		setType("line");
 		c = canvas;
-		// TODO Auto-generated constructor stub
 	}
-	
-	public DLineModel getModel()
-	{
+
+	public DLineModel getModel() {
 		return this;
 	}
-	
-	public Rectangle[] drawKnobs(){
+
+	public Rectangle[] drawKnobs() {
 		Rectangle knob1 = new Rectangle(this.getX(), this.getY(), 9, 9);
 		Rectangle knob2 = new Rectangle(this.getWidth(), this.getHeight(), 9, 9);
 		Rectangle[] knobs = new Rectangle[2];

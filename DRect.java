@@ -20,15 +20,11 @@ public class DRect extends DShape {
 	public void changeX(int x)
 	{
 		model.setX(x);
-		//System.out.println("This is the current model X: " + model.getX());
-		//r.setTranslateX(x);
 	}
 	
 	public void changeY(int y)
 	{
 		model.setY(y);
-		//System.out.println("This is the current model Y: " + model.getY());
-		//r.setTranslateY(y);
 	}
 	
 	

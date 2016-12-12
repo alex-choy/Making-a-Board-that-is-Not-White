@@ -1,17 +1,15 @@
 package WhiteBoard;
+
 import javafx.scene.paint.Color;
 
 public class DOvalModel extends DShapeModel {
 
-	public DOvalModel()
-	{
+	public DOvalModel() {
 		super();
 		setType("oval");
-		// TODO Auto-generated constructor stub
 	}
-	
-	public DOvalModel getModel()
-	{
+
+	public DOvalModel getModel() {
 		return this;
 	}
 

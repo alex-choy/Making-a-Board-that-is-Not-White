@@ -2,50 +2,45 @@ package WhiteBoard;
 
 import java.io.Serializable;
 
-
-public class PackagerClass implements Serializable
-{
+public class PackagerClass implements Serializable {
 	DShapeModel[] shapes;
 	String command;
 	public int index = 0;
 	public String color;
-	public PackagerClass()
-	{
-		//this.shapes = shapes;
-		//this.command = string;
+
+	public PackagerClass() {
+
 	}
-	
-	public DShapeModel[] getShapes()
-	{
+
+	public DShapeModel[] getShapes() {
 		return shapes;
 	}
 
-	public String getCommand()
-	{
+	public String getCommand() {
 		return command;
 	}
-	public void setShapes(DShapeModel[] model)
-	{
+
+	public void setShapes(DShapeModel[] model) {
 		shapes = model;
 	}
-	public void setCommand(String com)
-	{
+
+	public void setCommand(String com) {
 		command = com;
 	}
-	public int getIndex()
-	{
+
+	public int getIndex() {
 		return index;
 	}
-	public void setIndex(int i)
-	{
+
+	public void setIndex(int i) {
 		index = i;
 	}
-	public void setColor(String c)
-	{
+
+	public void setColor(String c) {
 		color = c;
 	}
-	public String getColor()
-	{
+
+	public String getColor() {
 		return color;
 	}
 }
